@@ -140,6 +140,32 @@ button:disabled{opacity:.45}
 .phoneMetric b{display:block;font-size:19px;color:#167a63;margin-top:4px}
 @media(orientation:landscape) and (max-height:520px){#phoneToggle{top:55px}#gamePhone{height:92dvh;width:min(430px,70vw);padding:7px;border-radius:23px;grid-template-rows:22px 1fr 22px;gap:5px}#phoneHome{padding:10px 12px}#phoneContent{padding:5px 8px 10px}.phoneApps{gap:8px}.phoneApp{min-height:63px}.phoneApp span{width:39px;height:39px;font-size:20px}.phoneWelcome{font-size:18px;margin-bottom:10px}}
 @media(orientation:portrait) and (max-width:900px){#phoneToggle{top:62px}}
+
+/* Larger, clearer smartphone home screen */
+#gamePhone{width:min(500px,92vw);height:min(720px,90dvh);min-height:340px;padding:12px;grid-template-rows:32px 1fr 30px;gap:9px}
+#phoneHome{padding:22px 18px 20px}
+.phoneWelcome{font-size:27px;margin:5px 0 24px}
+.phoneWelcome span{font-size:13px}
+.phoneApps{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 13px}
+.phoneApp{min-height:108px;padding:10px 4px;border-radius:18px;background:linear-gradient(155deg,#f9fcff,#dce8f1);box-shadow:0 5px 15px #30495d22;font-size:12px;font-weight:800;gap:9px}
+.phoneApp span{width:66px;height:66px;border-radius:20px;font-size:32px;box-shadow:0 5px 13px #32495c35}
+.phoneApp:active{transform:scale(.97)}
+.phoneResetApp{background:linear-gradient(150deg,#fff0f0,#f5d9dc);color:#8e2635;border:1px solid #e5aeb5}
+.phoneResetApp span{background:linear-gradient(145deg,#fff,#f4cdd2);color:#a3293a}
+.phoneHomeNote{font-size:11px;line-height:1.5;margin:22px 5px 8px}
+#phoneClose{width:32px;height:30px;font-size:22px}
+#phoneContent{padding:12px 13px 16px}
+@media(orientation:landscape) and (max-height:520px){
+ #gamePhone{width:min(500px,76vw);height:94dvh;min-height:0;padding:8px;grid-template-rows:24px 1fr 20px;gap:5px}
+ #phoneHome{padding:12px 16px}
+ .phoneWelcome{font-size:21px;margin:2px 0 12px}
+ .phoneWelcome span{font-size:11px}
+ .phoneApps{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 10px}
+ .phoneApp{min-height:72px;padding:5px 3px;gap:4px;font-size:10px}
+ .phoneApp span{width:44px;height:44px;border-radius:14px;font-size:23px}
+ .phoneHomeNote{margin:10px 4px 3px;font-size:9px}
+}
+
 </style>
 </head>
 <body>
@@ -150,7 +176,7 @@ button:disabled{opacity:.45}
  <div class="panel"><div class="sub">YOUR CASH</div><div class="money" id="cash">$5,000,000</div></div>
 </div>
 <button id="phoneToggle" aria-label="Open in-game phone">📱 PHONE</button><button id="fullscreenToggle" aria-label="Toggle full screen">⛶ Full screen</button><button id="buildingAction">Enter building</button>
-<div id="gamePhone" aria-label="DERRY smartphone"><div class="phoneTop"><div><span class="phoneSignal">● ● ●</span><span id="phoneClock">DERRY MOBILE</span></div><button id="phoneClose" aria-label="Close phone">×</button></div><div id="phoneHome"><div class="phoneWelcome">Welcome back<span>Manage your DERRY life</span></div><div class="phoneApps"><button class="phoneApp" data-app="business"><span>🏢</span>Business</button><button class="phoneApp" data-app="garage"><span>🚘</span>Garage</button><button class="phoneApp" data-app="properties"><span>🏠</span>Properties</button><button class="phoneApp" data-app="shop"><span>🛍️</span>City Shop</button><button class="phoneApp" data-app="employees"><span>👥</span>Employees</button><button class="phoneApp" data-app="stock"><span>📦</span>Stock</button><button class="phoneApp" data-app="finances"><span>💳</span>Finances</button></div><div class="phoneHomeNote">Tap an app to get started.</div></div><div class="phoneAppHeader"><button id="phoneBack">‹</button><b id="phoneAppTitle">Business</b><span>● ● ●</span></div><div id="phoneContent"></div><div class="phoneBottom"><span></span><span></span><span></span></div></div>
+<div id="gamePhone" aria-label="DERRY smartphone"><div class="phoneTop"><div><span class="phoneSignal">● ● ●</span><span id="phoneClock">DERRY MOBILE</span></div><button id="phoneClose" aria-label="Close phone">×</button></div><div id="phoneHome"><div class="phoneWelcome">Welcome back<span>Manage your DERRY life</span></div><div class="phoneApps"><button class="phoneApp" data-app="business"><span>🏢</span>Business</button><button class="phoneApp" data-app="garage"><span>🚘</span>Garage</button><button class="phoneApp" data-app="properties"><span>🏠</span>Properties</button><button class="phoneApp" data-app="shop"><span>🛍️</span>City Shop</button><button class="phoneApp" data-app="employees"><span>👥</span>Employees</button><button class="phoneApp" data-app="stock"><span>📦</span>Stock</button><button class="phoneApp" data-app="finances"><span>💳</span>Finances</button><button class="phoneApp phoneResetApp" id="resetGamePhone"><span>🔄</span>Reset Game</button></div><div class="phoneHomeNote">Choose an app to manage your DERRY life · Reset Game starts fresh.</div></div><div class="phoneAppHeader"><button id="phoneBack">‹</button><b id="phoneAppTitle">Business</b><span>● ● ●</span></div><div id="phoneContent"></div><div class="phoneBottom"><span></span><span></span><span></span></div></div>
 <div id="business" class="panel">
  <h3>Business district</h3>
  <div class="stat">Owned businesses: <b id="owned">0</b></div>
