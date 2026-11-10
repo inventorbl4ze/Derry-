@@ -36,9 +36,55 @@ button:disabled{opacity:.45}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 @media(pointer:coarse){#stick{display:block}#hint{bottom:16px;max-width:78vw;white-space:normal;text-align:center}}
 @media(orientation:portrait) and (max-width:700px){#business{top:92px;width:174px}.panel{padding:9px 10px}.money{font-size:16px}.brand{font-size:15px}#hint{bottom:175px}}
+
+/* Landscape-first mobile layout */
+#business{top:68px;right:max(10px,env(safe-area-inset-right));width:min(190px,25vw);max-height:calc(100dvh - 82px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+#garage,#shopPanel{width:min(340px,72vw);max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain}
+#hint{bottom:10px;max-width:42vw;white-space:normal;text-align:center}
+#stick{left:max(12px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));width:100px;height:100px}
+#nub{left:27px;top:27px;width:44px;height:44px}
+#steering{left:max(10px,env(safe-area-inset-left));bottom:max(8px,env(safe-area-inset-bottom));width:116px;height:116px}
+.wheel-ring{border-width:9px}
+.wheel-ring i{height:70px}
+.wheel-ring b{width:68px}
+#pedals{right:max(10px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom));gap:7px}
+#pedals button{width:66px;height:56px;padding:6px;font-size:9px}
+#carButton{right:max(10px,env(safe-area-inset-right))!important;bottom:82px!important;width:104px!important;height:40px!important;padding:7px!important}
+#speed{right:max(10px,env(safe-area-inset-right))!important;bottom:130px!important}
+#toast{top:18%;max-width:80vw;text-align:center}
+#rotateNotice{display:none;position:fixed;inset:0;z-index:30;background:linear-gradient(145deg,#07111e,#12334a);color:#f5f7fb;align-items:center;justify-content:center;text-align:center;padding:28px}
+#rotateNotice .rotate-card{max-width:300px}
+#rotateNotice .rotate-icon{font-size:54px;line-height:1.4}
+#rotateNotice strong{display:block;font-size:20px;margin:8px 0}
+#rotateNotice p{font-size:13px;color:#b9cbdc;line-height:1.5}
+@media (orientation:landscape) and (max-height:520px){
+ .hud{top:max(6px,env(safe-area-inset-top));left:8px;right:8px;gap:6px}
+ .panel{padding:7px 9px;border-radius:11px}
+ .brand{font-size:14px}.sub{font-size:9px}.money{font-size:16px}
+ #business{top:58px;width:174px;max-height:calc(100dvh - 66px);padding:7px 9px}
+ #business h3{font-size:10px;margin-bottom:5px}
+ #business .stat{font-size:10px;margin:3px 0}
+ #business button{font-size:10px;padding:6px 7px;margin-top:5px}
+ #business .sub{font-size:8px}
+ #stick{width:88px;height:88px}
+ #nub{left:23px;top:23px;width:40px;height:40px}
+ #steering{width:102px;height:102px}
+ .wheel-ring{border-width:8px}
+ .wheel-ring i{height:62px}.wheel-ring b{width:60px}
+ #pedals button{height:48px;width:60px}
+ #carButton{bottom:68px!important}
+ #speed{bottom:112px!important}
+ #hint{font-size:9px;bottom:5px;padding:5px 8px}
+ #garage,#shopPanel{max-height:calc(100dvh - 14px);padding:9px 12px}
+ #garage button,#shopPanel button{margin-top:5px;padding:7px}
+}
+@media (orientation:portrait) and (max-width:900px){
+ #rotateNotice{display:flex}
+}
 </style>
 </head>
 <body>
+<div id="rotateNotice"><div class="rotate-card"><div class="rotate-icon">📱 ↻</div><strong>Rotate your phone</strong><p>DERRY is designed for landscape mode. Turn your phone sideways to see the full city and all game controls.</p></div></div>
 <div id="game"></div>
 <div class="hud">
  <div class="panel"><div class="brand">DERRY <span style="color:#71e9bd">😎</span></div><div class="sub">CITY & BUSINESS LIFE</div></div>
