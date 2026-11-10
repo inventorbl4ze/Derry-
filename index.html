@@ -111,7 +111,8 @@ button:disabled{opacity:.45}
  <div class="panel"><div class="brand">DERRY <span style="color:#71e9bd">😎</span></div><div class="sub">CITY & BUSINESS LIFE</div></div>
  <div class="panel"><div class="sub">YOUR CASH</div><div class="money" id="cash">$100,000</div></div>
 </div>
-<div id="business" class="panel"><button id="businessToggle" aria-expanded="false">Business ▼</button>
+<button id="businessToggle" aria-expanded="false">Business ▼</button>
+<div id="business" class="panel">
  <h3>Business district</h3>
  <div class="stat">Owned businesses: <b id="owned">0</b></div>
  <div class="stat">Income: <b id="income">$0 / 15 sec</b></div>
@@ -127,6 +128,7 @@ button:disabled{opacity:.45}
  <button id="buyHouse">Buy a home · $60,000</button>
  <button id="furnishHouse">Furnish home · $5,000</button>
  <button id="moveIntoHouse">Move into my home</button>
+ <button id="leaveHome">Leave home</button>
  <button id="closeProperty">Close</button>
 </div>
 <div id="nub"></div></div><div id="garage" class="panel"><h3>Vehicle Garage</h3><div class="stat">Choose a car to drive</div><button data-car="blue">Blue City Car · Owned</button><button data-car="red">Red Sport Car · $18,000</button><button data-car="gold">Gold Executive Car · $35,000</button><button id="closeGarage">Close garage</button></div><div id="shopPanel" class="panel"><h3>City Shop</h3><div class="stat">Buy stock to earn extra income.</div><button id="shopStock">Buy shop stock · $5,000</button><button id="closeShop">Leave shop</button></div><div id="steering"><div class="wheel-ring"><i></i><b></b><span class="spoke spoke-a"></span><span class="spoke spoke-b"></span><em><small>D</small></em></div></div><div id="pedals"><button id="brakePedal">BRAKE</button><button id="gasPedal">ACCELERATE</button></div>
@@ -276,7 +278,7 @@ const cashEl=document.querySelector('#cash'),ownedEl=document.querySelector('#ow
 function ui(){cashEl.textContent='$'+Math.floor(cash).toLocaleString('en-US');ownedEl.textContent=owned;incomeEl.textContent='$'+(owned*(250*businessLevel+employees*100)+shopStock*75).toLocaleString('en-US')+' / 15 sec';buy.disabled=cash<25000;document.querySelector('#upgradeBusiness').textContent='Upgrade business · $10,000 (Lv '+businessLevel+')';document.querySelector('#hireWorker').textContent='Hire employee · $7,500 ('+employees+')'}
 function save(){try{localStorage.setItem('derry_save',JSON.stringify({cash,owned,businessLevel,employees,shopStock,vehicles:function save(){try{localStorage.setItem('derry_save',JSON.stringify({cash,owned,businessLevel,employees,shopStock,ownedShop,ownedHouse,houseFurnished,vehicles:Object.fromEntries(Object.entries(fleet).map(([k,v])=>[k,v.owned]))}))}catch{}}
 function toast(msg){const el=document.querySelector('#toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800)}
-buy.addEventListener('click',()=>{if(cash<25000)return toast('Not enough cash yet.');cash-=25000;owned++;save();ui();toast('Kiosk purchased! Your business is open.')});document.querySelector('#upgradeBusiness').addEventListener('click',()=>{if(cash<10000)return toast('You need $10,000 to upgrade.');cash-=10000;businessLevel++;save();ui();toast('Business upgraded!')});document.querySelector('#hireWorker').addEventListener('click',()=>{if(cash<7500)return toast('You need $7,500 to hire an employee.');cash-=7500;employees++;save();ui();toast('Employee hired!')});ui();
+buy.addEventListener('click',()=>{if(cash<25000)return toast('Not enough cash yet.');cash-=25000;owned++;save();ui();toast('Kiosk purchased! Your business is open.')});document.querySelector('#upgradeBusiness').addEventListener('click',()=>{if(cash<10000)return toast('You need $10,000 to upgrade.');cash-=10000;businessLevel++;save();ui();toast('Business upgraded!')});document.querySelector('#hireWorker').addEventListener('click',()=>{if(cash<7500)return toast('You need $7,500 to hire an employee.');cash-=7500;employees++;shopWorkers.forEach((w,i)=>w.worker.visible=ownedShop&&i<Math.max(1,employees));save();ui();updatePropertyUI();toast('Employee hired!')});ui();
 const shopInterior=ui();updatePropertyUI();
 const shopInterior=new THREE.Group();shopInterior.position.set(150,0,150);scene.add(shopInterior);
 const shopFloor=new THREE.Mesh(new THREE.BoxGeometry(18,.25,16),mat(0xb7a58b));shopFloor.position.y=-.12;shopInterior.add(shopFloor);
@@ -300,6 +302,7 @@ function createShopWorker(x,z,index){
  worker.position.set(x,0,z);shopInterior.add(worker);shopWorkers.push({worker,baseX:x,phase:index*1.7});
 }
 for(let i=0;i<3;i++)createShopWorker(-3+i*3,-1,i);
+shopWorkers.forEach(w=>w.worker.visible=ownedShop);
 function updatePropertyUI(){
  document.querySelector('#propertyStatus').textContent='Shop: '+(ownedShop?'Owned':'Not owned')+' · Home: '+(ownedHouse?(houseFurnished?'Furnished':'Needs furniture'):'Not owned')+' · Employees: '+employees;
  document.querySelector('#buyShopProperty').textContent=ownedShop?'Shop purchased ✓':'Buy a shop · $40,000';
@@ -314,7 +317,7 @@ function updatePropertyUI(){
 document.querySelector('#buyShopProperty').addEventListener('click',()=>{
  if(ownedShop)return;
  if(cash<40000)return toast('You need $40,000 to buy this shop.');
- cash-=40000;ownedShop=true;save();ui();updatePropertyUI();toast('Congratulations! You own the City Shop.');
+ cash-=40000;ownedShop=true;shopWorkers.forEach(w=>w.worker.visible=true);save();ui();updatePropertyUI();toast('Congratulations! You own the City Shop.');
 });
 document.querySelector('#enterOwnedShop').addEventListener('click',()=>{
  if(!ownedShop)return toast('Buy the shop first.');
@@ -336,6 +339,7 @@ document.querySelector('#moveIntoHouse').addEventListener('click',()=>{
  if(driving)return toast('Park and exit your car first.');
  houseReturn={x:player.position.x,z:player.position.z};player.position.set(180,0,150);propertyPanel.style.display='none';toast('You moved into your home!');
 });
+document.querySelector('#leaveHome').addEventListener('click',()=>{if(!houseReturn)return toast('You are not inside your home.');player.position.set(houseReturn.x,0,houseReturn.z);houseReturn=null;toast('You left your home.');});
 
 const clock=new THREE.Clock();let elapsed=0;
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);elapsed+=dt;
