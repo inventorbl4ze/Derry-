@@ -90,6 +90,30 @@ const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.48,.9,4,8),shirt);torso.po
 const head=new THREE.Mesh(new THREE.SphereGeometry(.38,12,10),skin);head.position.y=2.45;head.castShadow=true;player.add(head);
 for(const side of [-1,1]){const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.19,.62,3,6),pants);leg.position.set(side*.23,.55,0);player.add(leg);const foot=new THREE.Mesh(new THREE.BoxGeometry(.32,.16,.48),shoe);foot.position.set(side*.23,.13,.12);player.add(foot)}
 player.position.set(4,0,4);scene.add(player);
+
+// Pedestrians bring the streets to life. These original NPCs walk along clear city-side lanes.
+const pedestrians=[];
+const pedestrianShirts=[0xc65d45,0x397a9b,0x9b713d,0x765b9d,0x3e8064,0xb05b86];
+function makePedestrian(x,z,direction,index){
+ const person=new THREE.Group();
+ const shirtMat=mat(pedestrianShirts[index%pedestrianShirts.length]);
+ const skinMat=mat(index%3===0?0x70452f:index%3===1?0x956448:0x583a2b);
+ const legMat=mat(index%2===0?0x26354a:0x41454a);
+ const body=new THREE.Mesh(new THREE.CapsuleGeometry(.27,.62,3,7),shirtMat);body.position.y=1.15;body.castShadow=true;person.add(body);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.22,10,8),skinMat);head.position.y=1.82;head.castShadow=true;person.add(head);
+ const legs=[];
+ for(const side of [-1,1]){
+  const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.105,.48,3,5),legMat);leg.position.set(side*.13,.48,0);leg.castShadow=true;person.add(leg);legs.push(leg);
+  const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.085,.42,3,5),skinMat);arm.position.set(side*.34,1.2,0);arm.rotation.z=side*.12;person.add(arm);
+ }
+ person.position.set(x,0,z);scene.add(person);
+ pedestrians.push({person,legs,z,direction,speed:2.1+(index%4)*.35,phase:index*.8});
+}
+for(let i=0;i<10;i++){
+ const lane=i%2===0?-7.2:7.2;
+ const start=-96+Math.floor(i/2)*42;
+ makePedestrian(lane,start,i%2===0?1:-1,i);
+}
 let yaw=0,moveX=0,moveY=0,camYaw=0,camPitch=.25;const keys={};
 const carButton=document.querySelector('#carButton'),speedPanel=document.querySelector('#speed'),speedValue=document.querySelector('#speedValue');
 carButton.addEventListener('click',()=>{if(!driving){const d=player.position.distanceTo(car.position);if(d>5.5)return toast('Walk closer to your car first.');driving=true;player.visible=false;speedPanel.style.display='block';carButton.textContent='Exit car';toast('You are now driving!')}else{driving=false;player.visible=true;player.position.set(car.position.x+2,0,car.position.z);carSpeed=0;speedPanel.style.display='none';carButton.textContent='Enter car';toast('You left the car.')}});addEventListener('keydown',e=>keys[e.key.toLowerCase()]=true);addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
@@ -104,6 +128,15 @@ function toast(msg){const el=document.querySelector('#toast');el.textContent=msg
 buy.addEventListener('click',()=>{if(cash<25000)return toast('Not enough cash yet.');cash-=25000;owned++;save();ui();toast('Kiosk purchased! Your business is open.')});ui();
 const clock=new THREE.Clock();let elapsed=0;
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);elapsed+=dt;
+ pedestrians.forEach(npc=>{
+  npc.z+=npc.direction*npc.speed*dt;
+  if(npc.z>108){npc.z=108;npc.direction=-1}
+  if(npc.z< -108){npc.z=-108;npc.direction=1}
+  npc.person.position.z=npc.z;
+  npc.person.rotation.y=npc.direction>0?0:Math.PI;
+  npc.legs[0].rotation.x=Math.sin(elapsed*7+npc.phase)*.42;
+  npc.legs[1].rotation.x=-Math.sin(elapsed*7+npc.phase)*.42;
+ });
  let ix=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+moveX;
  let iz=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0)+moveY;
  const len=Math.hypot(ix,iz);if(len>1){ix/=len;iz/=len}
