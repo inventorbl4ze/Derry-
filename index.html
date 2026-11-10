@@ -42,6 +42,8 @@ button:disabled{opacity:.45}
  <div class="sub" style="line-height:1.4;margin-top:8px">A starter business. More shops and upgrades are coming.</div>
 </div>
 <div id="stick"><div id="nub"></div></div>
+<button id="carButton" style="position:fixed;z-index:6;right:20px;bottom:42px;width:116px;height:48px">Enter car</button>
+<div id="speed" class="panel" style="position:fixed;z-index:4;right:20px;bottom:100px;display:none"><div class="sub">SPEED</div><b id="speedValue">0 km/h</b></div>
 <div id="look"></div>
 <div id="hint">Explore the city · WASD / arrows or touch joystick</div>
 <div id="toast"></div>
@@ -72,13 +74,25 @@ function building(x,z,w,d,h,color,i){const g=new THREE.Group();const body=new TH
 let n=0;for(let x=-112;x<=112;x+=28){for(let z=-112;z<=112;z+=28){if(Math.abs(x%42)<8||Math.abs(z%34)<8)continue;const w=10+(n%3)*2,d=9+(n%2)*3,h=8+(n%5)*3;building(x,z,w,d,h,palette[n%palette.length],n++)}}
 function tree(x,z){const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.25,.38,2.4,7),mat(0x76543a));trunk.position.set(x,1.2,z);trunk.castShadow=true;scene.add(trunk);const crown=new THREE.Mesh(new THREE.SphereGeometry(1.8,9,7),mat(0x3f7850));crown.position.set(x,3.1,z);crown.scale.y=1.1;crown.castShadow=true;scene.add(crown)}
 for(let x=-115;x<=115;x+=14){for(const z of [-8,8])tree(x,z);for(const z of [-42,42])tree(x,z)}
+// A simple player avatar and a drivable starter car.
+const car=new THREE.Group();const carPaint=new THREE.MeshStandardMaterial({color:0x1976a8,metalness:.45,roughness:.32});
+const carBody=new THREE.Mesh(new THREE.BoxGeometry(2.05,.72,4.1),carPaint);carBody.position.y=.85;carBody.castShadow=true;car.add(carBody);
+const cabin=new THREE.Mesh(new THREE.BoxGeometry(1.62,.82,1.9),mat(0x243d4c,.35));cabin.position.set(0,1.55,-.18);cabin.castShadow=true;car.add(cabin);
+const glass=new THREE.MeshStandardMaterial({color:0x8bbbc8,metalness:.25,roughness:.18,transparent:true,opacity:.72});
+const windscreen=new THREE.Mesh(new THREE.BoxGeometry(1.5,.62,.06),glass);windscreen.position.set(0,1.57, .79);windscreen.rotation.x=-.22;car.add(windscreen);
+const wheelMat=mat(0x15191d,.9),rimMat=mat(0x9ba8ae,.45);const wheels=[];
+for(const x of [-1,1])for(const z of [-1.28,1.28]){const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.38,.38,.22,12),wheelMat);wheel.rotation.z=Math.PI/2;wheel.position.set(x*1.02,.48,z);wheel.castShadow=true;car.add(wheel);wheels.push(wheel);const hub=new THREE.Mesh(new THREE.CylinderGeometry(.16,.16,.235,10),rimMat);hub.rotation.z=Math.PI/2;hub.position.copy(wheel.position);car.add(hub)}
+const lampMat=new THREE.MeshStandardMaterial({color:0xfff1bd,emissive:0x665522});for(const x of [-.68,.68]){const lamp=new THREE.Mesh(new THREE.BoxGeometry(.42,.2,.08),lampMat);lamp.position.set(x,.95,2.08);car.add(lamp)}
+car.position.set(4,0,0);scene.add(car);let driving=false,carSpeed=0;
 // Player character: original simple stylised 3D avatar.
 const player=new THREE.Group();const skin=mat(0x895b42),shirt=mat(0x1e6f76),pants=mat(0x253448),shoe=mat(0x151b22);
 const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.48,.9,4,8),shirt);torso.position.y=1.45;torso.castShadow=true;player.add(torso);
 const head=new THREE.Mesh(new THREE.SphereGeometry(.38,12,10),skin);head.position.y=2.45;head.castShadow=true;player.add(head);
 for(const side of [-1,1]){const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.19,.62,3,6),pants);leg.position.set(side*.23,.55,0);player.add(leg);const foot=new THREE.Mesh(new THREE.BoxGeometry(.32,.16,.48),shoe);foot.position.set(side*.23,.13,.12);player.add(foot)}
 player.position.set(4,0,4);scene.add(player);
-let yaw=0,moveX=0,moveY=0,camYaw=0,camPitch=.25;const keys={};addEventListener('keydown',e=>keys[e.key.toLowerCase()]=true);addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+let yaw=0,moveX=0,moveY=0,camYaw=0,camPitch=.25;const keys={};
+const carButton=document.querySelector('#carButton'),speedPanel=document.querySelector('#speed'),speedValue=document.querySelector('#speedValue');
+carButton.addEventListener('click',()=>{if(!driving){const d=player.position.distanceTo(car.position);if(d>5.5)return toast('Walk closer to your car first.');driving=true;player.visible=false;speedPanel.style.display='block';carButton.textContent='Exit car';toast('You are now driving!')}else{driving=false;player.visible=true;player.position.set(car.position.x+2,0,car.position.z);carSpeed=0;speedPanel.style.display='none';carButton.textContent='Enter car';toast('You left the car.')}});addEventListener('keydown',e=>keys[e.key.toLowerCase()]=true);addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 const stick=document.querySelector('#stick'),nub=document.querySelector('#nub');let stickId=null;
 stick.addEventListener('pointerdown',e=>{stickId=e.pointerId;stick.setPointerCapture(stickId);joy(e)});stick.addEventListener('pointermove',e=>{if(e.pointerId===stickId)joy(e)});function joy(e){const r=stick.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,len=Math.hypot(dx,dy),scale=Math.min(1,42/(len||1));moveX=dx/42*scale;moveY=dy/42*scale;nub.style.transform='translate('+dx*scale+'px,'+dy*scale+'px)'}function endJoy(e){if(e.pointerId===stickId){stickId=null;moveX=moveY=0;nub.style.transform=''}}stick.addEventListener('pointerup',endJoy);stick.addEventListener('pointercancel',endJoy);
 const look=document.querySelector('#look');let lookId=null,lastX=0,lastY=0;look.addEventListener('pointerdown',e=>{lookId=e.pointerId;lastX=e.clientX;lastY=e.clientY;look.setPointerCapture(lookId)});look.addEventListener('pointermove',e=>{if(e.pointerId!==lookId)return;camYaw-=(e.clientX-lastX)*.006;camPitch=Math.max(-.05,Math.min(.8,camPitch+(e.clientY-lastY)*.003));lastX=e.clientX;lastY=e.clientY});look.addEventListener('pointerup',()=>lookId=null);look.addEventListener('pointercancel',()=>lookId=null);
@@ -93,9 +107,9 @@ function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDel
  let ix=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+moveX;
  let iz=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0)+moveY;
  const len=Math.hypot(ix,iz);if(len>1){ix/=len;iz/=len}
- if(len>.05){yaw=Math.atan2(ix,iz)+camYaw;player.rotation.y=yaw;const speed=8.5*Math.min(1,len);const nx=THREE.MathUtils.clamp(player.position.x+Math.sin(yaw)*speed*dt,-122,122);const nz=THREE.MathUtils.clamp(player.position.z+Math.cos(yaw)*speed*dt,-122,122);const blocked=solidAreas.some(b=>nx>b.x-b.hw&&nx<b.x+b.hw&&nz>b.z-b.hd&&nz<b.z+b.hd);if(!blocked){player.position.x=nx;player.position.z=nz}else{const clearX=!solidAreas.some(b=>nx>b.x-b.hw&&nx<b.x+b.hw&&player.position.z>b.z-b.hd&&player.position.z<b.z+b.hd);const clearZ=!solidAreas.some(b=>player.position.x>b.x-b.hw&&player.position.x<b.x+b.hw&&nz>b.z-b.hd&&nz<b.z+b.hd);if(clearX)player.position.x=nx;if(clearZ)player.position.z=nz}}
- const distance=11,cx=player.position.x-Math.sin(camYaw)*Math.cos(camPitch)*distance,cz=player.position.z-Math.cos(camYaw)*Math.cos(camPitch)*distance;
- camera.position.lerp(new THREE.Vector3(cx,player.position.y+4+Math.sin(camPitch)*distance,cz),.12);camera.lookAt(player.position.x,1.5,player.position.z);
+ if(driving){const throttle=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0)+(-moveY);const steer=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+moveX;carSpeed=THREE.MathUtils.clamp(carSpeed+throttle*18*dt-(throttle===0?carSpeed*1.4*dt:0),-8,25);if(Math.abs(carSpeed)>.25)car.rotation.y+=steer*dt*(carSpeed>=0?1:-1)*1.35;const nx=THREE.MathUtils.clamp(car.position.x+Math.sin(car.rotation.y)*carSpeed*dt,-122,122),nz=THREE.MathUtils.clamp(car.position.z+Math.cos(car.rotation.y)*carSpeed*dt,-122,122);const blocked=solidAreas.some(b=>nx>b.x-b.hw-1&&nx<b.x+b.hw+1&&nz>b.z-b.hd-2&&nz<b.z+b.hd+2);if(!blocked){car.position.x=nx;car.position.z=nz}else{carSpeed=0}wheels.forEach(w=>w.rotation.x+=carSpeed*dt*1.7);player.position.copy(car.position);speedValue.textContent=Math.round(Math.abs(carSpeed)*3.6)+' km/h'}else if(len>.05){yaw=Math.atan2(ix,iz)+camYaw;player.rotation.y=yaw;const speed=8.5*Math.min(1,len);const nx=THREE.MathUtils.clamp(player.position.x+Math.sin(yaw)*speed*dt,-122,122);const nz=THREE.MathUtils.clamp(player.position.z+Math.cos(yaw)*speed*dt,-122,122);const blocked=solidAreas.some(b=>nx>b.x-b.hw&&nx<b.x+b.hw&&nz>b.z-b.hd&&nz<b.z+b.hd);if(!blocked){player.position.x=nx;player.position.z=nz}else{const clearX=!solidAreas.some(b=>nx>b.x-b.hw&&nx<b.x+b.hw&&player.position.z>b.z-b.hd&&player.position.z<b.z+b.hd);const clearZ=!solidAreas.some(b=>player.position.x>b.x-b.hw&&player.position.x<b.x+b.hw&&nz>b.z-b.hd&&nz<b.z+b.hd);if(clearX)player.position.x=nx;if(clearZ)player.position.z=nz}}
+ const target=driving?car:player;const distance=driving?15:11,cx=target.position.x-Math.sin(camYaw)*Math.cos(camPitch)*distance,cz=target.position.z-Math.cos(camYaw)*Math.cos(camPitch)*distance;
+ camera.position.lerp(new THREE.Vector3(cx,target.position.y+(driving?6:4)+Math.sin(camPitch)*distance,cz),.12);camera.lookAt(target.position.x,driving?1.2:1.5,target.position.z);
  if(performance.now()-lastPay>15000){lastPay=performance.now();if(owned){cash+=owned*250;save();ui();toast('Your businesses earned $'+(owned*250).toLocaleString('en-US'))}}
  renderer.render(scene,camera)}
 camera.position.set(4,7,16);animate();
