@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#07111e">
+<title>DERRY 😎 — City & Business Life</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,Arial,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#081522;color:#f5f7fb;touch-action:none}
+#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}
+.hud{position:fixed;z-index:4;top:env(safe-area-inset-top,10px);left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;pointer-events:none}
+.panel{background:rgba(5,15,28,.82);border:1px solid rgba(255,255,255,.13);border-radius:15px;padding:10px 13px;backdrop-filter:blur(12px);box-shadow:0 8px 30px #0005;pointer-events:auto}
+.brand{font-size:17px;font-weight:900;letter-spacing:1.5px}.sub{font-size:10px;color:#9eb2c8;margin-top:2px}
+.money{font-size:19px;font-weight:800;color:#72f0b2;font-variant-numeric:tabular-nums}
+#business{position:fixed;z-index:4;right:12px;top:88px;width:min(220px,46vw)}
+.panel h3{font-size:12px;text-transform:uppercase;letter-spacing:1px;margin:0 0 9px;color:#b7c8dc}
+.stat{font-size:12px;color:#c3d1df;margin:5px 0}
+button{border:0;border-radius:10px;padding:10px 12px;font-weight:800;color:#071522;background:linear-gradient(135deg,#79f0bd,#47c9e6);width:100%;margin-top:8px}
+button:disabled{opacity:.45}
+#hint{position:fixed;z-index:3;left:50%;bottom:18px;transform:translateX(-50%);background:#061322c9;border:1px solid #ffffff24;border-radius:20px;padding:8px 13px;font-size:11px;color:#d6e4f3;white-space:nowrap;pointer-events:none}
+#stick{position:fixed;z-index:5;left:24px;bottom:42px;width:116px;height:116px;border-radius:50%;background:#c7e3ff20;border:1px solid #ffffff50;display:none;touch-action:none}
+#nub{position:absolute;left:34px;top:34px;width:46px;height:46px;border-radius:50%;background:#a8d9f5aa;border:1px solid #fff9}
+#look{position:fixed;z-index:2;right:0;bottom:0;width:52%;height:58%;touch-action:none}
+#toast{position:fixed;z-index:8;left:50%;top:24%;transform:translate(-50%,-10px);opacity:0;background:#10283a;border:1px solid #72f0b2;border-radius:12px;padding:11px 16px;font-size:13px;transition:.2s;pointer-events:none}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media(pointer:coarse){#stick{display:block}#hint{bottom:16px;max-width:78vw;white-space:normal;text-align:center}}
+@media(orientation:portrait) and (max-width:700px){#business{top:92px;width:174px}.panel{padding:9px 10px}.money{font-size:16px}.brand{font-size:15px}#hint{bottom:175px}}
+</style>
+</head>
+<body>
+<div id="game"></div>
+<div class="hud">
+ <div class="panel"><div class="brand">DERRY <span style="color:#71e9bd">😎</span></div><div class="sub">CITY & BUSINESS LIFE</div></div>
+ <div class="panel"><div class="sub">YOUR CASH</div><div class="money" id="cash">$100,000</div></div>
+</div>
+<div id="business" class="panel">
+ <h3>Business district</h3>
+ <div class="stat">Owned businesses: <b id="owned">0</b></div>
+ <div class="stat">Income: <b id="income">$0 / 15 sec</b></div>
+ <button id="buy">Buy kiosk · $25,000</button>
+ <div class="sub" style="line-height:1.4;margin-top:8px">A starter business. More shops and upgrades are coming.</div>
+</div>
+<div id="stick"><div id="nub"></div></div>
+<div id="look"></div>
+<div id="hint">Explore the city · WASD / arrows or touch joystick</div>
+<div id="toast"></div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+const mount=document.querySelector('#game');
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x91b9cf);scene.fog=new THREE.Fog(0x91b9cf,65,210);
+const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,500);
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;mount.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xd9efff,0x52604e,2.1));
+const sun=new THREE.DirectionalLight(0xffedcf,2.5);sun.position.set(-35,65,25);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-75;sun.shadow.camera.right=75;sun.shadow.camera.top=75;sun.shadow.camera.bottom=-75;scene.add(sun);
+const mat=(color,rough=.85)=>new THREE.MeshStandardMaterial({color,roughness:rough});
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(260,260),mat(0x71856b));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+const roadMat=mat(0x343c45),lineMat=mat(0xd7c99b),sideMat=mat(0x9a9b8d);
+function road(x,z,w,d){const m=new THREE.Mesh(new THREE.BoxGeometry(w,.08,d),roadMat);m.position.set(x,.05,z);m.receiveShadow=true;scene.add(m);
+ if(w>d){for(let a=-w/2+3;a<w/2-2;a+=7){const l=new THREE.Mesh(new THREE.BoxGeometry(3,.025,.13),lineMat);l.position.set(x+a,.105,z);scene.add(l)}}else{for(let a=-d/2+3;a<d/2-2;a+=7){const l=new THREE.Mesh(new THREE.BoxGeometry(.13,.025,3),lineMat);l.position.set(x,.105,z+a);scene.add(l)}}}
+for(let k=-2;k<=2;k++){road(0,k*34,260,12);road(k*42,0,12,260)}
+const palette=[0xb9a58b,0xc5c9c4,0x8faaa9,0xd2b69b,0x8b9cae,0xc9c2ad,0x9eaa9c];
+function building(x,z,w,d,h,color,i){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(color));body.position.y=h/2;body.castShadow=true;body.receiveShadow=true;g.add(body);
+ const roof=new THREE.Mesh(new THREE.BoxGeometry(w+.35,.35,d+.35),mat(0x505b61));roof.position.y=h+.12;g.add(roof);
+ const winMat=new THREE.MeshStandardMaterial({color:0x29495a,metalness:.2,roughness:.3,emissive:0x142d3a});
+ const floors=Math.max(2,Math.floor(h/3.2));for(let f=0;f<floors;f++){for(let side=-1;side<=1;side++){if(w>5){const win=new THREE.Mesh(new THREE.BoxGeometry(1.15,1.25,.08),winMat);win.position.set(side*(w/3),1.9+f*3.05,d/2+.045);g.add(win)}}}
+ if(i%4===0){const sign=new THREE.Mesh(new THREE.BoxGeometry(w*.7,.7,.14),mat(0x1d796e));sign.position.set(0,Math.min(h-1,3.5),d/2+.12);g.add(sign)}
+ g.position.set(x,0,z);scene.add(g)}
+let n=0;for(let x=-112;x<=112;x+=28){for(let z=-112;z<=112;z+=28){if(Math.abs(x%42)<8||Math.abs(z%34)<8)continue;const w=10+(n%3)*2,d=9+(n%2)*3,h=8+(n%5)*3;building(x,z,w,d,h,palette[n%palette.length],n++)}}
+function tree(x,z){const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.25,.38,2.4,7),mat(0x76543a));trunk.position.set(x,1.2,z);trunk.castShadow=true;scene.add(trunk);const crown=new THREE.Mesh(new THREE.SphereGeometry(1.8,9,7),mat(0x3f7850));crown.position.set(x,3.1,z);crown.scale.y=1.1;crown.castShadow=true;scene.add(crown)}
+for(let x=-115;x<=115;x+=14){for(const z of [-8,8])tree(x,z);for(const z of [-42,42])tree(x,z)}
+// Player character: original simple stylised 3D avatar.
+const player=new THREE.Group();const skin=mat(0x895b42),shirt=mat(0x1e6f76),pants=mat(0x253448),shoe=mat(0x151b22);
+const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.48,.9,4,8),shirt);torso.position.y=1.45;torso.castShadow=true;player.add(torso);
+const head=new THREE.Mesh(new THREE.SphereGeometry(.38,12,10),skin);head.position.y=2.45;head.castShadow=true;player.add(head);
+for(const side of [-1,1]){const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.19,.62,3,6),pants);leg.position.set(side*.23,.55,0);player.add(leg);const foot=new THREE.Mesh(new THREE.BoxGeometry(.32,.16,.48),shoe);foot.position.set(side*.23,.13,.12);player.add(foot)}
+player.position.set(4,0,4);scene.add(player);
+let yaw=0,moveX=0,moveY=0,camYaw=0,camPitch=.25;const keys={};addEventListener('keydown',e=>keys[e.key.toLowerCase()]=true);addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+const stick=document.querySelector('#stick'),nub=document.querySelector('#nub');let stickId=null;
+stick.addEventListener('pointerdown',e=>{stickId=e.pointerId;stick.setPointerCapture(stickId);joy(e)});stick.addEventListener('pointermove',e=>{if(e.pointerId===stickId)joy(e)});function joy(e){const r=stick.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,len=Math.hypot(dx,dy),scale=Math.min(1,42/(len||1));moveX=dx/42*scale;moveY=dy/42*scale;nub.style.transform='translate('+dx*scale+'px,'+dy*scale+'px)'}function endJoy(e){if(e.pointerId===stickId){stickId=null;moveX=moveY=0;nub.style.transform=''}}stick.addEventListener('pointerup',endJoy);stick.addEventListener('pointercancel',endJoy);
+const look=document.querySelector('#look');let lookId=null,lastX=0,lastY=0;look.addEventListener('pointerdown',e=>{lookId=e.pointerId;lastX=e.clientX;lastY=e.clientY;look.setPointerCapture(lookId)});look.addEventListener('pointermove',e=>{if(e.pointerId!==lookId)return;camYaw-=(e.clientX-lastX)*.006;camPitch=Math.max(-.05,Math.min(.8,camPitch+(e.clientY-lastY)*.003));lastX=e.clientX;lastY=e.clientY});look.addEventListener('pointerup',()=>lookId=null);look.addEventListener('pointercancel',()=>lookId=null);
+let cash=100000,owned=0,lastPay=performance.now();try{const s=JSON.parse(localStorage.getItem('derry_save')||'null');if(s){cash=Math.max(0,Number(s.cash)||100000);owned=Math.max(0,Number(s.owned)||0)}}catch{}
+const cashEl=document.querySelector('#cash'),ownedEl=document.querySelector('#owned'),incomeEl=document.querySelector('#income'),buy=document.querySelector('#buy');
+function ui(){cashEl.textContent='$'+Math.floor(cash).toLocaleString('en-US');ownedEl.textContent=owned;incomeEl.textContent='$'+(owned*250).toLocaleString('en-US')+' / 15 sec';buy.disabled=cash<25000}
+function save(){try{localStorage.setItem('derry_save',JSON.stringify({cash,owned}))}catch{}}
+function toast(msg){const el=document.querySelector('#toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800)}
+buy.addEventListener('click',()=>{if(cash<25000)return toast('Not enough cash yet.');cash-=25000;owned++;save();ui();toast('Kiosk purchased! Your business is open.')});ui();
+const clock=new THREE.Clock();let elapsed=0;
+function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);elapsed+=dt;
+ let ix=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+moveX;
+ let iz=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0)+moveY;
+ const len=Math.hypot(ix,iz);if(len>1){ix/=len;iz/=len}
+ if(len>.05){yaw=Math.atan2(ix,iz)+camYaw;player.rotation.y=yaw;player.position.x+=Math.sin(yaw)*Math.min(9*dt,9*dt);player.position.z+=Math.cos(yaw)*Math.min(9*dt,9*dt)}
+ player.position.x=THREE.MathUtils.clamp(player.position.x,-122,122);player.position.z=THREE.MathUtils.clamp(player.position.z,-122,122);
+ const distance=11,cx=player.position.x-Math.sin(camYaw)*Math.cos(camPitch)*distance,cz=player.position.z-Math.cos(camYaw)*Math.cos(camPitch)*distance;
+ camera.position.lerp(new THREE.Vector3(cx,player.position.y+4+Math.sin(camPitch)*distance,cz),.12);camera.lookAt(player.position.x,1.5,player.position.z);
+ if(performance.now()-lastPay>15000){lastPay=performance.now();if(owned){cash+=owned*250;save();ui();toast('Your businesses earned $'+(owned*250).toLocaleString('en-US'))}}
+ renderer.render(scene,camera)}
+camera.position.set(4,7,16);animate();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7))});
+</script>
+</body>
+</html>
