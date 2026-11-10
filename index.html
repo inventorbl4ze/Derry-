@@ -178,68 +178,79 @@ button:disabled{opacity:.45}
 #phoneWallet .phoneMetric b{overflow-wrap:anywhere;font-size:17px}
 @media(orientation:landscape) and (max-height:520px){#phoneToggle{right:10px;top:45px;min-width:112px;padding:8px 10px}#fullscreenToggle{right:10px;top:92px;padding:8px 10px}#buildingAction{right:10px;bottom:calc(115px + env(safe-area-inset-bottom));width:126px;min-width:126px;padding:9px}}
 
-/* Portrait-first layout and standard mobile-app screens */
+/* Portrait mode: keep the game intact and show one full app at a time */
 @media (orientation:portrait) and (max-width:900px){
   #rotateNotice{display:none!important}
   #gamePhone{
-    width:min(430px,94vw)!important;
-    height:min(760px,84dvh)!important;
-    min-height:300px!important;
-    padding:10px!important;
-    grid-template-rows:34px minmax(0,1fr) 24px!important;
-    gap:8px!important;
-    border-radius:26px!important;
+    width:min(470px,94vw)!important;
+    height:min(820px,90dvh)!important;
+    min-height:360px!important;
+    padding:12px!important;
+    grid-template-rows:38px minmax(0,1fr) 28px!important;
+    gap:10px!important;
   }
-  #phoneHome{padding:18px 14px 16px!important}
-  .phoneWelcome{font-size:23px!important;margin:4px 0 18px!important}
-  .phoneWelcome span{font-size:12px!important}
-  .phoneApps{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px 9px!important}
-  .phoneApp{min-height:88px!important;padding:7px 3px!important;font-size:11px!important}
-  .phoneApp span{width:54px!important;height:54px!important;font-size:26px!important;border-radius:16px!important}
-  #phoneContent{padding:10px 11px 18px!important}
-  #phoneContent .phone-app-screen,
+  #phoneHome{padding:22px 18px!important}
+  .phoneWelcome{font-size:27px!important;margin:5px 0 24px!important}
+  .phoneWelcome span{font-size:14px!important}
+  .phoneApps{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:17px 12px!important}
+  .phoneApp{min-height:100px!important;padding:9px 5px!important;font-size:14px!important;gap:9px!important}
+  .phoneApp span{width:62px!important;height:62px!important;font-size:30px!important}
+  .phoneHomeNote{font-size:13px!important;line-height:1.5!important}
+  #phoneContent{padding:14px 14px 20px!important}
+  /* Hidden apps stay hidden. Only the app selected by the user is displayed. */
+  #phoneContent .phone-app-screen{display:none!important}
   #phoneContent .phone-app-screen.active{
     display:block!important;
+    position:relative!important;
+    inset:auto!important;
+    transform:none!important;
     width:100%!important;
     max-width:100%!important;
-    min-width:0!important;
     height:auto!important;
+    max-height:none!important;
     min-height:0!important;
-    margin:0!important;
-    padding:12px!important;
-    position:relative!important;
-    transform:none!important;
     overflow:visible!important;
+    margin:0!important;
+    padding:16px!important;
     box-sizing:border-box!important;
+    border:0!important;
+    border-radius:14px!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    color:#203449!important;
   }
-  #phoneContent .phone-app-screen h3{display:block!important;margin:0 0 12px!important;font-size:17px!important}
-  #phoneContent .phoneMetric{
-    display:block!important;
-    width:100%!important;
-    min-width:0!important;
-    margin:9px 0!important;
-    padding:13px!important;
-    border:1px solid #c3d3df!important;
-    border-radius:13px!important;
-    background:#f7fafc!important;
-    box-sizing:border-box!important;
+  #phoneContent .phone-app-screen.active h3{font-size:19px!important;margin:0 0 14px!important}
+  #phoneContent .phone-app-screen.active .stat{font-size:15px!important}
+  #phoneContent .phone-app-screen.active .phone-app-note{font-size:14px!important;line-height:1.55!important}
+  #phoneContent .phone-app-screen.active .phoneMetric{
+    display:block!important;width:100%!important;min-width:0!important;
+    margin:11px 0!important;padding:15px!important;
+    border:1px solid #c3d3df!important;border-radius:14px!important;
+    background:#f7fafc!important;box-sizing:border-box!important;
+    font-size:14px!important;
   }
-  #phoneContent .phoneMetric b{display:block!important;margin-top:6px!important;font-size:clamp(16px,4.5vw,21px)!important;line-height:1.3!important;overflow-wrap:anywhere!important}
-  #phoneContent .phone-app-note{display:block!important;width:100%!important;line-height:1.5!important}
-  #phoneContent .phone-app-screen label{display:block!important;margin:14px 0 6px!important}
-  #phoneContent .phone-app-screen input,
-  #phoneContent .phone-app-screen select{display:block!important;width:100%!important;max-width:100%!important;min-height:44px!important;box-sizing:border-box!important}
-  #phoneContent .phone-app-screen button{display:block!important;width:100%!important;max-width:100%!important;min-height:44px!important;margin:9px 0!important;white-space:normal!important}
-  #phoneToggle{top:72px!important;right:10px!important;left:auto!important;transform:none!important;min-width:112px!important;width:auto!important;padding:9px 11px!important}
-  #fullscreenToggle{top:124px!important;right:10px!important}
-  #buildingAction{right:10px!important;left:auto!important;bottom:calc(150px + env(safe-area-inset-bottom))!important;width:126px!important;min-width:126px!important}
-  #business{max-width:calc(100vw - 24px)!important}
-  #hint{bottom:135px!important;max-width:72vw!important}
+  #phoneContent .phone-app-screen.active .phoneMetric b{
+    display:block!important;margin-top:7px!important;
+    font-size:21px!important;line-height:1.35!important;overflow-wrap:anywhere!important;
+  }
+  #phoneContent .phone-app-screen.active label{display:block!important;margin:15px 0 7px!important;font-size:14px!important}
+  #phoneContent .phone-app-screen.active input,
+  #phoneContent .phone-app-screen.active select{
+    width:100%!important;max-width:100%!important;min-height:48px!important;
+    box-sizing:border-box!important;font-size:16px!important;
+  }
+  #phoneContent .phone-app-screen.active button{
+    min-height:48px!important;margin:10px 0!important;
+    font-size:14px!important;white-space:normal!important;
+  }
+  #phoneToggle{top:74px!important;right:14px!important;left:auto!important;transform:none!important;min-width:132px!important;width:auto!important;padding:10px 16px!important}
+  #fullscreenToggle{top:130px!important;right:14px!important}
+  #buildingAction{right:14px!important;left:auto!important;bottom:calc(155px + env(safe-area-inset-bottom))!important;width:142px!important;min-width:142px!important}
+  #hint{bottom:16px!important;max-width:78vw!important}
 }
 @media (orientation:landscape) and (max-height:520px){
   #rotateNotice{display:none!important}
 }
-
 </style>
 </head>
 <body>
