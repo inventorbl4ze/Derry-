@@ -62,12 +62,13 @@ function road(x,z,w,d){const m=new THREE.Mesh(new THREE.BoxGeometry(w,.08,d),roa
  if(w>d){for(let a=-w/2+3;a<w/2-2;a+=7){const l=new THREE.Mesh(new THREE.BoxGeometry(3,.025,.13),lineMat);l.position.set(x+a,.105,z);scene.add(l)}}else{for(let a=-d/2+3;a<d/2-2;a+=7){const l=new THREE.Mesh(new THREE.BoxGeometry(.13,.025,3),lineMat);l.position.set(x,.105,z+a);scene.add(l)}}}
 for(let k=-2;k<=2;k++){road(0,k*34,260,12);road(k*42,0,12,260)}
 const palette=[0xb9a58b,0xc5c9c4,0x8faaa9,0xd2b69b,0x8b9cae,0xc9c2ad,0x9eaa9c];
+const solidAreas=[];
 function building(x,z,w,d,h,color,i){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(color));body.position.y=h/2;body.castShadow=true;body.receiveShadow=true;g.add(body);
  const roof=new THREE.Mesh(new THREE.BoxGeometry(w+.35,.35,d+.35),mat(0x505b61));roof.position.y=h+.12;g.add(roof);
  const winMat=new THREE.MeshStandardMaterial({color:0x29495a,metalness:.2,roughness:.3,emissive:0x142d3a});
  const floors=Math.max(2,Math.floor(h/3.2));for(let f=0;f<floors;f++){for(let side=-1;side<=1;side++){if(w>5){const win=new THREE.Mesh(new THREE.BoxGeometry(1.15,1.25,.08),winMat);win.position.set(side*(w/3),1.9+f*3.05,d/2+.045);g.add(win)}}}
  if(i%4===0){const sign=new THREE.Mesh(new THREE.BoxGeometry(w*.7,.7,.14),mat(0x1d796e));sign.position.set(0,Math.min(h-1,3.5),d/2+.12);g.add(sign)}
- g.position.set(x,0,z);scene.add(g)}
+ g.position.set(x,0,z);scene.add(g);solidAreas.push({x,z,hw:w/2+.85,hd:d/2+.85})}
 let n=0;for(let x=-112;x<=112;x+=28){for(let z=-112;z<=112;z+=28){if(Math.abs(x%42)<8||Math.abs(z%34)<8)continue;const w=10+(n%3)*2,d=9+(n%2)*3,h=8+(n%5)*3;building(x,z,w,d,h,palette[n%palette.length],n++)}}
 function tree(x,z){const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.25,.38,2.4,7),mat(0x76543a));trunk.position.set(x,1.2,z);trunk.castShadow=true;scene.add(trunk);const crown=new THREE.Mesh(new THREE.SphereGeometry(1.8,9,7),mat(0x3f7850));crown.position.set(x,3.1,z);crown.scale.y=1.1;crown.castShadow=true;scene.add(crown)}
 for(let x=-115;x<=115;x+=14){for(const z of [-8,8])tree(x,z);for(const z of [-42,42])tree(x,z)}
@@ -92,8 +93,7 @@ function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDel
  let ix=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+moveX;
  let iz=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0)+moveY;
  const len=Math.hypot(ix,iz);if(len>1){ix/=len;iz/=len}
- if(len>.05){yaw=Math.atan2(ix,iz)+camYaw;player.rotation.y=yaw;player.position.x+=Math.sin(yaw)*Math.min(9*dt,9*dt);player.position.z+=Math.cos(yaw)*Math.min(9*dt,9*dt)}
- player.position.x=THREE.MathUtils.clamp(player.position.x,-122,122);player.position.z=THREE.MathUtils.clamp(player.position.z,-122,122);
+ if(len>.05){yaw=Math.atan2(ix,iz)+camYaw;player.rotation.y=yaw;const speed=8.5*Math.min(1,len);const nx=THREE.MathUtils.clamp(player.position.x+Math.sin(yaw)*speed*dt,-122,122);const nz=THREE.MathUtils.clamp(player.position.z+Math.cos(yaw)*speed*dt,-122,122);const blocked=solidAreas.some(b=>nx>b.x-b.hw&&nx<b.x+b.hw&&nz>b.z-b.hd&&nz<b.z+b.hd);if(!blocked){player.position.x=nx;player.position.z=nz}else{const clearX=!solidAreas.some(b=>nx>b.x-b.hw&&nx<b.x+b.hw&&player.position.z>b.z-b.hd&&player.position.z<b.z+b.hd);const clearZ=!solidAreas.some(b=>player.position.x>b.x-b.hw&&player.position.x<b.x+b.hw&&nz>b.z-b.hd&&nz<b.z+b.hd);if(clearX)player.position.x=nx;if(clearZ)player.position.z=nz}}
  const distance=11,cx=player.position.x-Math.sin(camYaw)*Math.cos(camPitch)*distance,cz=player.position.z-Math.cos(camYaw)*Math.cos(camPitch)*distance;
  camera.position.lerp(new THREE.Vector3(cx,player.position.y+4+Math.sin(camPitch)*distance,cz),.12);camera.lookAt(player.position.x,1.5,player.position.z);
  if(performance.now()-lastPay>15000){lastPay=performance.now();if(owned){cash+=owned*250;save();ui();toast('Your businesses earned $'+(owned*250).toLocaleString('en-US'))}}
