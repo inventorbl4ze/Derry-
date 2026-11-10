@@ -104,6 +104,42 @@ button:disabled{opacity:.45}
 @media (orientation:portrait) and (max-width:900px){
  #rotateNotice{display:flex}
 }
+
+/* DERRY in-game smartphone */
+#businessToggle{display:none!important}
+#phoneToggle{position:fixed;z-index:11;top:74px;left:50%;transform:translateX(-50%);width:auto;min-width:116px;margin:0;padding:10px 16px;border:1px solid #ffffff55;background:linear-gradient(135deg,#2c4962,#132a40);color:#fff;box-shadow:0 6px 20px #0008}
+#gamePhone{display:none;position:fixed;z-index:40;left:50%;top:50%;transform:translate(-50%,-50%);width:min(390px,88vw);height:min(690px,88dvh);min-height:310px;padding:10px;border:2px solid #526b80;border-radius:30px;background:linear-gradient(155deg,#172b3d,#07111d 72%);box-shadow:0 22px 80px #000d;overflow:hidden;grid-template-rows:28px 1fr 30px;gap:8px}
+#gamePhone.open{display:grid}
+.phoneTop{display:flex;align-items:center;justify-content:space-between;padding:0 7px;font-size:10px;color:#c6d7e7;letter-spacing:.5px}
+.phoneSignal{margin-right:9px;color:#72f0b2}
+#phoneClose{width:28px;height:25px;margin:0;padding:0;border-radius:50%;background:#8d4550;color:white;font-size:20px;line-height:20px}
+#phoneHome{min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;padding:20px 13px 16px;border-radius:20px;background:linear-gradient(155deg,#e9f1f7,#c8d8e7);color:#17283a}
+.phoneWelcome{font-size:23px;font-weight:900;margin:3px 0 22px}.phoneWelcome span{display:block;font-size:11px;font-weight:600;color:#63788c;margin-top:5px}
+.phoneApps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:19px 10px}
+.phoneApp{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;margin:0;padding:0;min-height:82px;background:transparent;color:#203449;font-size:11px;touch-action:manipulation}
+.phoneApp span{display:grid;place-items:center;width:52px;height:52px;border-radius:16px;background:linear-gradient(145deg,#fff,#d8e5ef);box-shadow:0 4px 12px #32495c30;font-size:25px}
+.phoneApp:active span{transform:scale(.94)}
+.phoneHomeNote{text-align:center;color:#6c8092;font-size:10px;margin-top:25px}
+.phoneAppHeader{display:none;align-items:center;gap:12px;padding:4px 7px;color:#eaf4ff;font-size:14px}
+.phoneAppHeader button{width:34px;height:30px;margin:0;padding:0;background:#29465d;color:#fff;font-size:23px;line-height:20px}
+.phoneAppHeader span{margin-left:auto;font-size:9px;color:#72f0b2}
+#phoneContent{display:none;min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;padding:8px 10px 14px;border-radius:18px;background:linear-gradient(155deg,#e9f1f7,#c8d8e7);color:#17283a}
+#phoneContent .phone-app-screen{display:none!important;position:relative!important;inset:auto!important;left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;transform:none!important;width:100%!important;max-width:none!important;max-height:none!important;height:auto!important;overflow:visible!important;margin:0!important;padding:13px!important;border:0!important;border-radius:13px!important;background:transparent!important;box-shadow:none!important;color:#203449!important}
+#phoneContent .phone-app-screen.active{display:block!important}
+#phoneContent .phone-app-screen h3{color:#35536c;font-size:13px}
+#phoneContent .phone-app-screen .stat{color:#3d566d;font-size:12px}
+#phoneContent .phone-app-screen .sub{color:#647b90}
+#phoneContent .phone-app-screen button{min-height:39px;margin-top:8px;border-radius:11px}
+#phoneContent .phone-app-screen label{color:#405b72!important}
+#phoneContent .phone-app-screen select{background:#fff!important;color:#203449!important;border-color:#aabccc!important}
+#phoneContent .phone-app-screen .phone-app-note{font-size:11px;color:#60778b;line-height:1.5;margin:7px 0 12px}
+#phoneBack{width:100%;height:28px;margin:0;padding:4px;background:transparent;border:1px solid #ffffff35;color:#dceaf5;font-size:11px}
+.phoneBottom{display:flex;align-items:center;justify-content:center}.phoneBottom span{width:48px;height:4px;border-radius:5px;background:#8297a9}
+#phoneEmployees,#phoneStock,#phoneFinances{padding:16px!important}
+.phoneMetric{padding:12px;margin:8px 0;border-radius:12px;background:#d9e6ef;color:#203449;font-size:12px}
+.phoneMetric b{display:block;font-size:19px;color:#167a63;margin-top:4px}
+@media(orientation:landscape) and (max-height:520px){#phoneToggle{top:55px}#gamePhone{height:92dvh;width:min(430px,70vw);padding:7px;border-radius:23px;grid-template-rows:22px 1fr 22px;gap:5px}#phoneHome{padding:10px 12px}#phoneContent{padding:5px 8px 10px}.phoneApps{gap:8px}.phoneApp{min-height:63px}.phoneApp span{width:39px;height:39px;font-size:20px}.phoneWelcome{font-size:18px;margin-bottom:10px}}
+@media(orientation:portrait) and (max-width:900px){#phoneToggle{top:62px}}
 </style>
 </head>
 <body>
@@ -113,13 +149,13 @@ button:disabled{opacity:.45}
  <div class="panel"><div class="brand">DERRY <span style="color:#71e9bd">😎</span></div><div class="sub">CITY & BUSINESS LIFE</div></div>
  <div class="panel"><div class="sub">YOUR CASH</div><div class="money" id="cash">$5,000,000</div></div>
 </div>
-<button id="businessToggle" aria-expanded="false">Business ▼</button><button id="fullscreenToggle" aria-label="Toggle full screen">⛶ Full screen</button><button id="buildingAction">Enter building</button>
+<button id="phoneToggle" aria-label="Open in-game phone">📱 PHONE</button><button id="fullscreenToggle" aria-label="Toggle full screen">⛶ Full screen</button><button id="buildingAction">Enter building</button>
+<div id="gamePhone" aria-label="DERRY smartphone"><div class="phoneTop"><div><span class="phoneSignal">● ● ●</span><span id="phoneClock">DERRY MOBILE</span></div><button id="phoneClose" aria-label="Close phone">×</button></div><div id="phoneHome"><div class="phoneWelcome">Welcome back<span>Manage your DERRY life</span></div><div class="phoneApps"><button class="phoneApp" data-app="business"><span>🏢</span>Business</button><button class="phoneApp" data-app="garage"><span>🚘</span>Garage</button><button class="phoneApp" data-app="properties"><span>🏠</span>Properties</button><button class="phoneApp" data-app="shop"><span>🛍️</span>City Shop</button><button class="phoneApp" data-app="employees"><span>👥</span>Employees</button><button class="phoneApp" data-app="stock"><span>📦</span>Stock</button><button class="phoneApp" data-app="finances"><span>💳</span>Finances</button></div><div class="phoneHomeNote">Tap an app to get started.</div></div><div class="phoneAppHeader"><button id="phoneBack">‹</button><b id="phoneAppTitle">Business</b><span>● ● ●</span></div><div id="phoneContent"></div><div class="phoneBottom"><span></span><span></span><span></span></div></div>
 <div id="business" class="panel">
  <h3>Business district</h3>
  <div class="stat">Owned businesses: <b id="owned">0</b></div>
  <div class="stat">Income: <b id="income">$0 / 15 sec</b></div>
- <button id="resetGame" style="background:#7a3541">Reset game · Start afresh</button><button id="buy">Buy kiosk · $25,000</button><button id="upgradeBusiness">Upgrade business · $10,000</button><button id="hireWorker">Hire employee · $7,500</button><button id="garageButton">Open garage</button><button id="shopButton">Visit city shop</button><button id="propertyButton">Homes & properties</button>
- <div class="sub" style="line-height:1.4;margin-top:8px">A starter business. More shops and upgrades are coming.</div>
+ <button id="buy">Buy kiosk · $25,000</button><button id="upgradeBusiness">Upgrade business · $10,000</button><div class="sub" style="line-height:1.5;margin-top:8px">Grow your business, upgrade operations and build your empire.</div><button id="resetGame" style="background:#7a3541">Reset game · Start afresh</button>
 </div>
 <div id="stick">
 <div id="propertyPanel" class="panel">
@@ -297,11 +333,25 @@ let yaw=0,moveX=0,moveY=0,camYaw=0,camPitch=.25;const keys={};
 const carButton=document.querySelector('#carButton'),speedPanel=document.querySelector('#speed'),speedValue=document.querySelector('#speedValue');
 const garage=document.querySelector('#garage'),shopPanel=document.querySelector('#shopPanel');
 const businessPanel=document.querySelector('#business');
-const businessToggle=document.querySelector('#businessToggle');
-businessToggle.addEventListener('click',()=>{const open=businessPanel.classList.toggle('open');businessToggle.textContent=open?'Business ▲':'Business ▼';businessToggle.setAttribute('aria-expanded',String(open))});
 const propertyPanel=document.querySelector('#propertyPanel');
-document.querySelector('#propertyButton').addEventListener('click',()=>{propertyPanel.style.display='block';businessPanel.classList.remove('open');businessToggle.textContent='Business ▼';updatePropertyUI()});
-document.querySelector('#closeProperty').addEventListener('click',()=>propertyPanel.style.display='none');
+const gamePhone=document.querySelector('#gamePhone'),phoneHome=document.querySelector('#phoneHome'),phoneContent=document.querySelector('#phoneContent'),phoneHeader=document.querySelector('.phoneAppHeader'),phoneTitle=document.querySelector('#phoneAppTitle');
+const phoneScreens={business:businessPanel,garage:garage,properties:propertyPanel,shop:shopPanel};
+const phoneNames={business:'Business',garage:'Vehicle Garage',properties:'Homes & Properties',shop:'City Shop',employees:'Employees',stock:'Stock & Supplies',finances:'Finances'};
+Object.values(phoneScreens).forEach(panel=>{panel.classList.add('phone-app-screen');phoneContent.appendChild(panel)});
+function showPhoneHome(){Object.values(phoneScreens).forEach(panel=>panel.classList.remove('active'));document.querySelectorAll('.phoneExtraScreen').forEach(panel=>panel.classList.remove('active'));phoneContent.style.display='none';phoneHeader.style.display='none';phoneHome.style.display='block';}
+function openPhoneApp(name){gamePhone.classList.add('open');phoneHome.style.display='none';phoneHeader.style.display='flex';phoneContent.style.display='block';phoneTitle.textContent=phoneNames[name]||'DERRY App';Object.values(phoneScreens).forEach(panel=>panel.classList.remove('active'));document.querySelectorAll('.phoneExtraScreen').forEach(panel=>panel.classList.remove('active'));const screen=phoneScreens[name]||document.querySelector('#phone'+name.charAt(0).toUpperCase()+name.slice(1));if(screen)screen.classList.add('active');phoneContent.scrollTop=0;if(name==='properties')updatePropertyUI();if(name==='employees')refreshPhoneApps();if(name==='stock')refreshPhoneApps();if(name==='finances')refreshPhoneApps();}
+function closeGamePhone(){gamePhone.classList.remove('open');showPhoneHome();}
+document.querySelector('#phoneToggle').addEventListener('click',()=>{if(gamePhone.classList.contains('open'))closeGamePhone();else{showPhoneHome();gamePhone.classList.add('open')}});document.querySelector('#phoneClose').addEventListener('click',closeGamePhone);document.querySelector('#phoneBack').addEventListener('click',showPhoneHome);
+document.querySelectorAll('.phoneApp').forEach(button=>button.addEventListener('click',()=>openPhoneApp(button.dataset.app)));
+function makePhoneScreen(id,title,body){const el=document.createElement('section');el.id=id;el.className='phone-app-screen phoneExtraScreen';el.innerHTML='<h3>'+title+'</h3>'+body;phoneContent.appendChild(el);return el}
+const employeeScreen=makePhoneScreen('phoneEmployees','Your team','<div class="phoneMetric">Employees hired<b id="phoneEmployeeCount">0</b></div><div class="phone-app-note">Employees help increase your business income over time.</div><button id="phoneHireWorker">Hire employee · $7,500</button>');
+const stockScreen=makePhoneScreen('phoneStock','Shop inventory','<div class="phoneMetric">Stock units<b id="phoneStockCount">0</b></div><div class="phone-app-note">Purchase stock to increase the income from your shop.</div><button id="phoneBuyStock">Buy stock · $5,000</button>');
+const financeScreen=makePhoneScreen('phoneFinances','Money overview','<div class="phoneMetric">Available cash<b id="phoneCashValue">$5,000,000</b></div><div class="phoneMetric">Estimated income<b id="phoneIncomeValue">$0 / 15 sec</b></div><div class="phone-app-note">Your business income is added automatically while you explore DERRY.</div>');
+document.querySelector('#phoneHireWorker').addEventListener('click',()=>document.querySelector('#hireWorker').click());
+document.querySelector('#phoneBuyStock').addEventListener('click',()=>document.querySelector('#shopStock').click());
+function refreshPhoneApps(){const e=document.querySelector('#phoneEmployeeCount'),st=document.querySelector('#phoneStockCount'),c=document.querySelector('#phoneCashValue'),inc=document.querySelector('#phoneIncomeValue');if(e)e.textContent=employees;if(st)st.textContent=shopStock;if(c)c.textContent='$'+Math.floor(cash).toLocaleString('en-US');if(inc)inc.textContent='$'+(owned*(250*businessLevel+employees*100)+shopStock*75).toLocaleString('en-US')+' / 15 sec';}
+document.querySelector('#propertyButton')?.addEventListener('click',()=>openPhoneApp('properties'));
+document.querySelector('#closeProperty').addEventListener('click',showPhoneHome);
 
 const fleet={blue:{car,price:0,owned:true},red:{car:null,price:18000,owned:false},gold:{car:null,price:35000,owned:false},bugatti:{car:null,price:2800000,owned:false},aventador:{car:null,price:1650000,owned:false}};
 function extraCar(color){const v=car.clone(true);v.traverse(o=>{if(o.isMesh&&o.material===carPaint)o.material=mat(color,.3)});v.position.set(14,0,4);v.visible=false;scene.add(v);return v}
@@ -313,11 +363,11 @@ function aircraftModel(kind){const g=new THREE.Group(),white=new THREE.MeshStand
 const aircraft={jet:{model:aircraftModel('jet'),price:18000000,owned:false},plane:{model:aircraftModel('plane'),price:850000,owned:false}};let selectedAircraft='plane',flightActive=false,flightSpeed=0,climbHeld=false,descendHeld=false;function selectAircraft(kind){const a=aircraft[kind];if(!a.owned)return toast('Purchase this aircraft first.');if(driving)return toast('Exit your car first.');Object.values(aircraft).forEach(v=>v.model.visible=false);selectedAircraft=kind;a.model.visible=true;a.model.position.set(-48,0,4);toast((kind==='jet'?'Private jet':'Propeller airplane')+' selected in the hangar.')}
 let activeVehicle='blue';
 function activeCar(){return fleet[activeVehicle].car}
-document.querySelector('#garageButton').addEventListener('click',()=>garage.style.display='block');document.querySelector('#buyJet').onclick=()=>{const a=aircraft.jet;if(a.owned)return selectAircraft('jet');if(cash<a.price)return toast('You need $18,000,000 for the private jet.');cash-=a.price;a.owned=true;save();ui();selectAircraft('jet')};document.querySelector('#buyPlane').onclick=()=>{const a=aircraft.plane;if(a.owned)return selectAircraft('plane');if(cash<a.price)return toast('You need $850,000 for the airplane.');cash-=a.price;a.owned=true;save();ui();selectAircraft('plane')};document.querySelector('#flyAircraft').onclick=()=>{const a=aircraft[selectedAircraft];if(!a.owned)return toast('Buy a jet or airplane first.');if(driving)return toast('Exit your car before flying.');flightActive=true;garage.style.display='none';a.model.visible=true;a.model.position.set(player.position.x,1,player.position.z);a.model.rotation.y=player.rotation.y;flightSpeed=0;document.querySelector('#flightControls').style.display='flex';carButton.style.display='none';toast('Take off! Joystick steers, W or ACCELERATE adds speed, CLIMB and DESCEND change altitude.')};document.querySelector('#flightExit').onclick=()=>{flightActive=false;const a=aircraft[selectedAircraft];a.model.visible=false;player.position.set(a.model.position.x,0,a.model.position.z);document.querySelector('#flightControls').style.display='none';carButton.style.display='block';toast('Aircraft parked.')};const hold=(id,on)=>{const el=document.querySelector(id);el.addEventListener('pointerdown',e=>{e.preventDefault();on(true)});['pointerup','pointercancel','pointerleave'].forEach(ev=>el.addEventListener(ev,()=>on(false)))};hold('#flightUp',v=>climbHeld=v);hold('#flightDown',v=>descendHeld=v);hold('#flightThrottle',v=>gasPressed=v);
-document.querySelector('#closeGarage').addEventListener('click',()=>garage.style.display='none');
-document.querySelectorAll('#garage [data-car]').forEach(btn=>btn.addEventListener('click',()=>{const id=btn.dataset.car,item=fleet[id];if(!item.owned){if(cash<item.price)return toast('Not enough cash for this car.');cash-=item.price;item.owned=true;save();ui()}if(driving)return toast('Exit the current car before switching.');Object.values(fleet).forEach(v=>v.car.visible=false);activeVehicle=id;item.car.visible=true;item.car.position.set(player.position.x+3,0,player.position.z);garage.style.display='none';carButton.textContent='Enter car';save();toast('Selected '+id+' car.')}));
-document.querySelector('#shopButton').addEventListener('click',()=>{if(driving)return toast('Park and exit your car before entering.');shopReturn={x:player.position.x,z:player.position.z};player.position.set(150,0,150);player.rotation.y=0;shopPanel.style.display='block';toast('You entered the City Shop!')});
-document.querySelector('#closeShop').addEventListener('click',()=>{shopPanel.style.display='none';if(shopReturn){player.position.set(shopReturn.x,0,shopReturn.z);shopReturn=null}toast('You left the City Shop.')});
+document.querySelector('#garageButton').addEventListener('click',()=>openPhoneApp('garage'));document.querySelector('#buyJet').onclick=()=>{const a=aircraft.jet;if(a.owned)return selectAircraft('jet');if(cash<a.price)return toast('You need $18,000,000 for the private jet.');cash-=a.price;a.owned=true;save();ui();selectAircraft('jet')};document.querySelector('#buyPlane').onclick=()=>{const a=aircraft.plane;if(a.owned)return selectAircraft('plane');if(cash<a.price)return toast('You need $850,000 for the airplane.');cash-=a.price;a.owned=true;save();ui();selectAircraft('plane')};document.querySelector('#flyAircraft').onclick=()=>{const a=aircraft[selectedAircraft];if(!a.owned)return toast('Buy a jet or airplane first.');if(driving)return toast('Exit your car before flying.');flightActive=true;showPhoneHome();a.model.visible=true;a.model.position.set(player.position.x,1,player.position.z);a.model.rotation.y=player.rotation.y;flightSpeed=0;document.querySelector('#flightControls').style.display='flex';carButton.style.display='none';toast('Take off! Joystick steers, W or ACCELERATE adds speed, CLIMB and DESCEND change altitude.')};document.querySelector('#flightExit').onclick=()=>{flightActive=false;const a=aircraft[selectedAircraft];a.model.visible=false;player.position.set(a.model.position.x,0,a.model.position.z);document.querySelector('#flightControls').style.display='none';carButton.style.display='block';toast('Aircraft parked.')};const hold=(id,on)=>{const el=document.querySelector(id);el.addEventListener('pointerdown',e=>{e.preventDefault();on(true)});['pointerup','pointercancel','pointerleave'].forEach(ev=>el.addEventListener(ev,()=>on(false)))};hold('#flightUp',v=>climbHeld=v);hold('#flightDown',v=>descendHeld=v);hold('#flightThrottle',v=>gasPressed=v);
+document.querySelector('#closeGarage').addEventListener('click',showPhoneHome);
+document.querySelectorAll('#garage [data-car]').forEach(btn=>btn.addEventListener('click',()=>{const id=btn.dataset.car,item=fleet[id];if(!item.owned){if(cash<item.price)return toast('Not enough cash for this car.');cash-=item.price;item.owned=true;save();ui()}if(driving)return toast('Exit the current car before switching.');Object.values(fleet).forEach(v=>v.car.visible=false);activeVehicle=id;item.car.visible=true;item.car.position.set(player.position.x+3,0,player.position.z);showPhoneHome();carButton.textContent='Enter car';save();toast('Selected '+id+' car.')}));
+document.querySelector('#shopButton').addEventListener('click',()=>{if(driving)return toast('Park and exit your car before entering.');shopReturn={x:player.position.x,z:player.position.z};player.position.set(150,0,150);player.rotation.y=0;openPhoneApp('shop');toast('You entered the City Shop!')});
+document.querySelector('#closeShop').addEventListener('click',()=>{showPhoneHome();if(shopReturn){player.position.set(shopReturn.x,0,shopReturn.z);shopReturn=null}toast('You left the City Shop.')});
 document.querySelector('#shopStock').addEventListener('click',()=>{if(cash<5000)return toast('You need $5,000 for stock.');cash-=5000;shopStock++;save();ui();toast('Shop stock purchased!')});
 document.querySelectorAll('#garage [data-car]').forEach(btn=>{const v=fleet[btn.dataset.car];btn.textContent=btn.dataset.car.toUpperCase()+' CAR · '+(v.price?'$'+v.price.toLocaleString('en-US'):'OWNED')});
 const steering=document.querySelector('#steering'),wheelRing=steering.querySelector('.wheel-ring'),pedals=document.querySelector('#pedals');
@@ -344,7 +394,7 @@ let cash=5000000,owned=0,businessLevel=1,employees=0,shopStock=0,lastPay=perform
 // One-time clean start for this release: clear earlier test progress on this device.
 try{if(localStorage.getItem('derry_fresh_start_v1')!=='yes'){localStorage.removeItem('derry_save');localStorage.setItem('derry_fresh_start_v1','yes');cash=5000000;owned=0;businessLevel=1;employees=0;shopStock=0;ownedShop=false;ownedHouse=false;houseFurnished=false;Object.values(fleet).forEach(v=>v.owned=v===fleet.blue);Object.values(aircraft).forEach(v=>v.owned=false)}}catch{}
 const cashEl=document.querySelector('#cash'),ownedEl=document.querySelector('#owned'),incomeEl=document.querySelector('#income'),buy=document.querySelector('#buy');
-function ui(){cashEl.textContent='$'+Math.floor(cash).toLocaleString('en-US');ownedEl.textContent=owned;incomeEl.textContent='$'+(owned*(250*businessLevel+employees*100)+shopStock*75).toLocaleString('en-US')+' / 15 sec';buy.disabled=cash<25000;document.querySelector('#upgradeBusiness').textContent='Upgrade business · $10,000 (Lv '+businessLevel+')';document.querySelector('#hireWorker').textContent='Hire employee · $7,500 ('+employees+')'}
+function ui(){cashEl.textContent='$'+Math.floor(cash).toLocaleString('en-US');ownedEl.textContent=owned;incomeEl.textContent='$'+(owned*(250*businessLevel+employees*100)+shopStock*75).toLocaleString('en-US')+' / 15 sec';buy.disabled=cash<25000;document.querySelector('#upgradeBusiness').textContent='Upgrade business · $10,000 (Lv '+businessLevel+')';document.querySelector('#hireWorker').textContent='Hire employee · $7,500 ('+employees+')';refreshPhoneApps()}
 function save(){try{localStorage.setItem('derry_save',JSON.stringify({cash,owned,businessLevel,employees,shopStock,ownedShop,ownedHouse,houseFurnished,vehicles:Object.fromEntries(Object.entries(fleet).map(([k,v])=>[k,v.owned])),aircraft:Object.fromEntries(Object.entries(aircraft).map(([k,v])=>[k,v.owned]))}))}catch{}}
 document.querySelector('#resetGame').addEventListener('click',()=>{if(!confirm('Start a completely fresh DERRY game? Your saved businesses, purchases and progress on this device will be cleared.'))return;cash=5000000;owned=0;businessLevel=1;employees=0;shopStock=0;ownedShop=false;ownedHouse=false;houseFurnished=false;Object.values(fleet).forEach(v=>v.owned=v===fleet.blue);Object.values(aircraft).forEach(v=>v.owned=false);try{localStorage.removeItem('derry_save')}catch{}save();ui();updatePropertyUI();toast('Fresh start! You have $5,000,000.');setTimeout(()=>location.reload(),700)});
 function toast(msg){const el=document.querySelector('#toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800)}
@@ -404,7 +454,7 @@ document.querySelector('#buyShopProperty').addEventListener('click',()=>{
 document.querySelector('#enterOwnedShop').addEventListener('click',()=>{
  if(!ownedShop)return toast('Buy the shop first.');
  if(driving)return toast('Park and exit your car first.');
- shopReturn={x:player.position.x,z:player.position.z};player.position.set(150,0,150);shopPanel.style.display='block';propertyPanel.style.display='none';toast('Welcome to your shop. Your staff are working!');
+ shopReturn={x:player.position.x,z:player.position.z};player.position.set(150,0,150);propertyPanel.classList.remove('active');openPhoneApp('shop');toast('Welcome to your shop. Your staff are working!');
 });
 document.querySelector('#buyHouse').addEventListener('click',()=>{
  if(ownedHouse)return;
@@ -419,7 +469,7 @@ document.querySelector('#furnishHouse').addEventListener('click',()=>{
 document.querySelector('#moveIntoHouse').addEventListener('click',()=>{
  if(!ownedHouse)return;
  if(driving)return toast('Park and exit your car first.');
- houseReturn={x:player.position.x,z:player.position.z};player.position.set(180,0,150);propertyPanel.style.display='none';toast('You moved into your home!');
+ houseReturn={x:player.position.x,z:player.position.z};player.position.set(180,0,150);propertyPanel.classList.remove('active');showPhoneHome();toast('You moved into your home!');
 });
 document.querySelector('#leaveHome').addEventListener('click',()=>{if(!houseReturn)return toast('You are not inside your home.');player.position.set(houseReturn.x,0,houseReturn.z);houseReturn=null;toast('You left your home.');});
 
