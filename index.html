@@ -55,7 +55,7 @@ button:disabled{opacity:.45}
 #business{top:68px;right:max(10px,env(safe-area-inset-right));width:min(190px,25vw);max-height:calc(100dvh - 82px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
 #business{display:none;left:50%;right:auto;top:50%;transform:translate(-50%,-50%);width:min(360px,84vw);max-height:82dvh;z-index:12}
 #business.open{display:block}
-#businessToggle{position:fixed;z-index:11;top:74px;left:50%;transform:translateX(-50%);width:auto;min-width:132px;margin:0;padding:9px 15px;border:1px solid #ffffff45;box-shadow:0 5px 18px #0007}
+#fullscreenToggle{position:fixed;z-index:11;top:74px;right:12px;width:auto;margin:0;padding:9px 12px;border:1px solid #ffffff45;background:linear-gradient(135deg,#344d65,#182d42);color:#f4f8ff}\n#businessToggle{position:fixed;z-index:11;top:74px;left:50%;transform:translateX(-50%);width:auto;min-width:132px;margin:0;padding:9px 15px;border:1px solid #ffffff45;box-shadow:0 5px 18px #0007}
 #business button{margin-top:7px}
 #propertyPanel{position:fixed;z-index:13;left:50%;top:50%;transform:translate(-50%,-50%);width:min(340px,84vw);max-height:82dvh;overflow-y:auto;display:none}
 #propertyPanel button{margin-top:7px}
@@ -111,7 +111,7 @@ button:disabled{opacity:.45}
  <div class="panel"><div class="brand">DERRY <span style="color:#71e9bd">😎</span></div><div class="sub">CITY & BUSINESS LIFE</div></div>
  <div class="panel"><div class="sub">YOUR CASH</div><div class="money" id="cash">$100,000</div></div>
 </div>
-<button id="businessToggle" aria-expanded="false">Business ▼</button>
+<button id="businessToggle" aria-expanded="false">Business ▼</button><button id="fullscreenToggle" aria-label="Toggle full screen">⛶ Full screen</button>
 <div id="business" class="panel">
  <h3>Business district</h3>
  <div class="stat">Owned businesses: <b id="owned">0</b></div>
@@ -140,6 +140,9 @@ button:disabled{opacity:.45}
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
 
+const fullButton=document.querySelector('#fullscreenToggle');
+fullButton.addEventListener('click',async()=>{try{if(!document.fullscreenElement){await document.documentElement.requestFullscreen();fullButton.textContent='⛶ Exit full screen';}else{await document.exitFullscreen();fullButton.textContent='⛶ Full screen';}}catch(e){toast('Full screen is not available in this browser. Try Chrome menu → Add to Home screen.')}});
+document.addEventListener('fullscreenchange',()=>{fullButton.textContent=document.fullscreenElement?'⛶ Exit full screen':'⛶ Full screen';});
 const mount=document.querySelector('#game');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x91b9cf);scene.fog=new THREE.Fog(0x91b9cf,65,210);
 const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,500);
@@ -174,11 +177,14 @@ const wheelMat=mat(0x15191d,.9),rimMat=mat(0x9ba8ae,.45);const wheels=[];
 for(const x of [-1,1])for(const z of [-1.28,1.28]){const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.38,.38,.22,12),wheelMat);wheel.rotation.z=Math.PI/2;wheel.position.set(x*1.02,.48,z);wheel.castShadow=true;car.add(wheel);wheels.push(wheel);const hub=new THREE.Mesh(new THREE.CylinderGeometry(.16,.16,.235,10),rimMat);hub.rotation.z=Math.PI/2;hub.position.copy(wheel.position);car.add(hub)}
 const lampMat=new THREE.MeshStandardMaterial({color:0xfff1bd,emissive:0x665522});for(const x of [-.68,.68]){const lamp=new THREE.Mesh(new THREE.BoxGeometry(.42,.2,.08),lampMat);lamp.position.set(x,.95,2.08);car.add(lamp)}
 car.position.set(4,0,0);scene.add(car);let driving=false,carSpeed=0;
-// Player character: original simple stylised 3D avatar.
+// Original detailed player avatar with layered clothing, face, hair, arms and shoes.
 const player=new THREE.Group();const skin=mat(0x895b42),shirt=mat(0x1e6f76),pants=mat(0x253448),shoe=mat(0x151b22);
-const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.48,.9,4,8),shirt);torso.position.y=1.45;torso.castShadow=true;player.add(torso);
-const head=new THREE.Mesh(new THREE.SphereGeometry(.38,12,10),skin);head.position.y=2.45;head.castShadow=true;player.add(head);
-for(const side of [-1,1]){const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.19,.62,3,6),pants);leg.position.set(side*.23,.55,0);player.add(leg);const foot=new THREE.Mesh(new THREE.BoxGeometry(.32,.16,.48),shoe);foot.position.set(side*.23,.13,.12);player.add(foot)}
+const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.43,.82,5,10),shirt);torso.position.y=1.48;torso.castShadow=true;player.add(torso);
+const neck=new THREE.Mesh(new THREE.CylinderGeometry(.13,.16,.22,10),skin);neck.position.y=2.05;player.add(neck);
+const head=new THREE.Mesh(new THREE.SphereGeometry(.34,16,12),skin);head.position.y=2.38;head.scale.set(1,1.12,.94);head.castShadow=true;player.add(head);
+const hair=new THREE.Mesh(new THREE.SphereGeometry(.35,14,9,0,Math.PI*2,0,Math.PI*.52),mat(0x201a18));hair.position.set(0,2.53,-.015);player.add(hair);
+const eyeMat=mat(0x17191b,.3);for(const side of [-1,1]){const eye=new THREE.Mesh(new THREE.SphereGeometry(.035,8,6),eyeMat);eye.position.set(side*.115,2.42,.302);player.add(eye);const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.16,.62,4,8),pants);leg.position.set(side*.2,.55,0);leg.castShadow=true;player.add(leg);const foot=new THREE.Mesh(new THREE.BoxGeometry(.34,.17,.5),shoe);foot.position.set(side*.2,.13,.13);player.add(foot);const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.56,4,8),shirt);arm.position.set(side*.52,1.43,0);arm.rotation.z=side*.12;arm.castShadow=true;player.add(arm);const hand=new THREE.Mesh(new THREE.SphereGeometry(.13,8,7),skin);hand.position.set(side*.55,1.05,.02);player.add(hand)}
+const belt=new THREE.Mesh(new THREE.BoxGeometry(.72,.12,.48),mat(0x282b2e));belt.position.y=.95;player.add(belt);
 player.position.set(4,0,4);scene.add(player);
 
 // Pedestrians bring the streets to life. These original NPCs walk along clear city-side lanes.
@@ -207,7 +213,7 @@ function makeCyclist(x,z,direction,index){
  const head=new THREE.Mesh(new THREE.SphereGeometry(.15,8,7),mat(0x80583e));head.position.set(0,1.68,.05);bike.add(head);
  bike.position.set(x,0,z);scene.add(bike);cyclists.push({bike,z,direction,speed:3.5+index*.35});
 }
-for(let i=0;i<4;i++)makeCyclist(i%2===0?-7.2:7.2,-90+i*55,i%2===0?1:-1,i);
+for(let i=0;i<8;i++)makeCyclist(i%2===0?-7.2:7.2,-108+i*29,i%2===0?1:-1,i);
 
 const pedestrians=[];
 const pedestrianShirts=[0xc65d45,0x397a9b,0x9b713d,0x765b9d,0x3e8064,0xb05b86];
@@ -217,16 +223,19 @@ function makePedestrian(x,z,direction,index){
  const skinMat=mat(index%3===0?0x70452f:index%3===1?0x956448:0x583a2b);
  const legMat=mat(index%2===0?0x26354a:0x41454a);
  const body=new THREE.Mesh(new THREE.CapsuleGeometry(.27,.62,3,7),shirtMat);body.position.y=1.15;body.castShadow=true;person.add(body);
- const head=new THREE.Mesh(new THREE.SphereGeometry(.22,10,8),skinMat);head.position.y=1.82;head.castShadow=true;person.add(head);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.22,12,10),skinMat);head.position.y=1.82;head.castShadow=true;person.add(head);
+ const hair=new THREE.Mesh(new THREE.SphereGeometry(.225,10,8,0,Math.PI*2,0,Math.PI*.62),mat(index%3===0?0x211b18:index%3===1?0x33241d:0x17191d));hair.position.set(0,1.91,-.015);person.add(hair);
+ const eyeMaterial=mat(0x17191b,.3);for(const side of [-1,1]){const eye=new THREE.Mesh(new THREE.SphereGeometry(.022,6,5),eyeMaterial);eye.position.set(side*.075,1.84,.205);person.add(eye)}
  const legs=[];
  for(const side of [-1,1]){
   const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.105,.48,3,5),legMat);leg.position.set(side*.13,.48,0);leg.castShadow=true;person.add(leg);legs.push(leg);
-  const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.085,.42,3,5),skinMat);arm.position.set(side*.34,1.2,0);arm.rotation.z=side*.12;person.add(arm);
+  const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.085,.42,4,7),shirtMat);arm.position.set(side*.34,1.2,0);arm.rotation.z=side*.12;person.add(arm);
+  const shoeMesh=new THREE.Mesh(new THREE.BoxGeometry(.24,.12,.34),mat(0x17191d));shoeMesh.position.set(side*.13,.13,.09);person.add(shoeMesh);
  }
  person.position.set(x,0,z);scene.add(person);
  pedestrians.push({person,legs,z,direction,speed:2.1+(index%4)*.35,phase:index*.8});
 }
-for(let i=0;i<18;i++){
+for(let i=0;i<30;i++){
  const lane=i%2===0?-7.2:7.2;
  const start=-96+Math.floor(i/2)*42;
  makePedestrian(lane,start,i%2===0?1:-1,i);
@@ -284,8 +293,19 @@ const shopInterior=new THREE.Group();shopInterior.position.set(150,0,150);scene.
 const shopFloor=new THREE.Mesh(new THREE.BoxGeometry(18,.25,16),mat(0xb7a58b));shopFloor.position.y=-.12;shopInterior.add(shopFloor);
 const shopWallMat=mat(0xe1d8c7);
 for(const wall of [{x:0,y:2.5,z:-8,w:18,h:5,d:.3},{x:-9,y:2.5,z:0,w:.3,h:5,d:16},{x:9,y:2.5,z:0,w:.3,h:5,d:16}]){const m=new THREE.Mesh(new THREE.BoxGeometry(wall.w,wall.h,wall.d),shopWallMat);m.position.set(wall.x,wall.y,wall.z);shopInterior.add(m)}
+const shopCeiling=new THREE.Mesh(new THREE.BoxGeometry(18,.25,16),mat(0xf0eadf));shopCeiling.position.y=5;shopInterior.add(shopCeiling);
 const counter=new THREE.Mesh(new THREE.BoxGeometry(6,1.2,1.2),mat(0x79553a));counter.position.set(0,.6,4);shopInterior.add(counter);
-for(let row=0;row<2;row++){const shelf=new THREE.Mesh(new THREE.BoxGeometry(1,3,8),mat(0x76583d));shelf.position.set(row===0?-6:6,1.5,-1);shopInterior.add(shelf);for(let k=0;k<4;k++){const goods=new THREE.Mesh(new THREE.BoxGeometry(.75,.55,.75),mat([0xc95a46,0x4c9b78,0xd6ad48,0x477fa6][(k+row)%4]));goods.position.set(row===0?-5.4:5.4,.6+k*.65,-4+k*1.8);shopInterior.add(goods)}}
+const counterTop=new THREE.Mesh(new THREE.BoxGeometry(6.2,.12,1.35),mat(0x302b27,.35));counterTop.position.set(0,1.27,4);shopInterior.add(counterTop);
+const till=new THREE.Group();const tillBase=new THREE.Mesh(new THREE.BoxGeometry(.7,.3,.55),mat(0x222b32));tillBase.position.y=1.48;till.add(tillBase);const tillScreen=new THREE.Mesh(new THREE.BoxGeometry(.55,.36,.08),mat(0x347b8c,.3));tillScreen.position.set(0,1.77,-.12);till.add(tillScreen);till.position.set(1,0,4);shopInterior.add(till);
+for(let row=0;row<2;row++){const shelf=new THREE.Mesh(new THREE.BoxGeometry(1,3.4,8),mat(0x76583d));shelf.position.set(row===0?-6:6,1.7,-1);shopInterior.add(shelf);for(let k=0;k<5;k++){const goods=new THREE.Mesh(new THREE.BoxGeometry(.75,.48,.75),mat([0xc95a46,0x4c9b78,0xd6ad48,0x477fa6,0xe0d4b9][(k+row)%5]));goods.position.set(row===0?-5.4:5.4,.55+k*.62,-4+k*1.8);shopInterior.add(goods)}}
+// Extra store fixtures: refrigerator, display tables, clothing rack, baskets and ceiling lights.
+function shopFixture(x,y,z,w,h,d,color){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(color,.55));m.position.set(x,y,z);m.castShadow=true;shopInterior.add(m);return m}
+shopFixture(-2,1.25,-5,2.4,2.5,1.2,0x9aa9ae);shopFixture(-2,1.3,-4.36,2.1,2.2,.08,0x79a9b5);
+shopFixture(2,0.55,-1.5,2.4,1.1,1.5,0x8a6041);shopFixture(2,1.15,-1.5,2.5,.12,1.6,0x493b31);
+shopFixture(0,.85,-2.5,3.2,.12,1.1,0x76583d);shopFixture(0,1.35,-2.5,3.2,.12,1.1,0x76583d);
+for(let i=0;i<4;i++){const hanger=new THREE.Mesh(new THREE.BoxGeometry(.38,.75,.06),mat([0xc45c4b,0x457d9a,0xd5a84c,0x668b68][i]));hanger.position.set(-1.1+i*.7,1.78,-2.5);shopInterior.add(hanger)}
+for(const x of [-5,0,5]){const lamp=new THREE.PointLight(0xffe6bb,1.15,13);lamp.position.set(x,4.4,0);shopInterior.add(lamp);const shade=new THREE.Mesh(new THREE.CylinderGeometry(.42,.62,.2,12),mat(0xddd2b9));shade.position.set(x,4.7,0);shopInterior.add(shade)}
+const shopSign=new THREE.Mesh(new THREE.BoxGeometry(7,.8,.16),mat(0x1c6f69));shopSign.position.set(0,3.8,7.82);shopInterior.add(shopSign);
 let shopReturn=null;
 const houseInterior=new THREE.Group();houseInterior.position.set(180,0,150);scene.add(houseInterior);
 const houseFloor=new THREE.Mesh(new THREE.BoxGeometry(20,.3,18),mat(0x9b8064));houseFloor.position.y=-.14;houseInterior.add(houseFloor);
