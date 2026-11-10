@@ -102,6 +102,15 @@ for(const side of [-1,1]){const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.19
 player.position.set(4,0,4);scene.add(player);
 
 // Pedestrians bring the streets to life. These original NPCs walk along clear city-side lanes.
+const traffic=[];
+function makeTrafficCar(x,z,direction,color,index){
+ const v=new THREE.Group();
+ const body=new THREE.Mesh(new THREE.BoxGeometry(1.8,.65,3.4),mat(color,.35));body.position.y=.68;body.castShadow=true;v.add(body);
+ const cabin=new THREE.Mesh(new THREE.BoxGeometry(1.45,.68,1.55),mat(0x263f50,.3));cabin.position.set(0,1.28,-.15);v.add(cabin);
+ for(const side of [-1,1])for(const end of [-1,1]){const w=new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,.18,10),mat(0x17191c));w.rotation.z=Math.PI/2;w.position.set(side*.92,.38,end*1.05);v.add(w)}
+ v.position.set(x,0,z);scene.add(v);traffic.push({v,z,direction,speed:5+index*1.2});
+}
+for(let i=0;i<5;i++)makeTrafficCar(i%2===0?-3:45,-100+i*42,i%2===0?1:-1,[0xb94343,0x3d83a7,0xd1a447,0x56836a,0x7d6a9c][i],i);
 const pedestrians=[];
 const pedestrianShirts=[0xc65d45,0x397a9b,0x9b713d,0x765b9d,0x3e8064,0xb05b86];
 function makePedestrian(x,z,direction,index){
@@ -135,8 +144,8 @@ function activeCar(){return fleet[activeVehicle].car}
 document.querySelector('#garageButton').addEventListener('click',()=>garage.style.display='block');
 document.querySelector('#closeGarage').addEventListener('click',()=>garage.style.display='none');
 document.querySelectorAll('#garage [data-car]').forEach(btn=>btn.addEventListener('click',()=>{const id=btn.dataset.car,item=fleet[id];if(!item.owned){if(cash<item.price)return toast('Not enough cash for this car.');cash-=item.price;item.owned=true;save();ui()}if(driving)return toast('Exit the current car before switching.');Object.values(fleet).forEach(v=>v.car.visible=false);activeVehicle=id;item.car.visible=true;item.car.position.set(player.position.x+3,0,player.position.z);garage.style.display='none';carButton.textContent='Enter car';save();toast('Selected '+id+' car.')}));
-document.querySelector('#shopButton').addEventListener('click',()=>{if(driving)return toast('Park and exit your car before entering.');shopPanel.style.display='block'});
-document.querySelector('#closeShop').addEventListener('click',()=>shopPanel.style.display='none');
+document.querySelector('#shopButton').addEventListener('click',()=>{if(driving)return toast('Park and exit your car before entering.');shopReturn={x:player.position.x,z:player.position.z};player.position.set(150,0,150);player.rotation.y=0;shopPanel.style.display='block';toast('You entered the City Shop!')});
+document.querySelector('#closeShop').addEventListener('click',()=>{shopPanel.style.display='none';if(shopReturn){player.position.set(shopReturn.x,0,shopReturn.z);shopReturn=null}toast('You left the City Shop.')});
 document.querySelector('#shopStock').addEventListener('click',()=>{if(cash<5000)return toast('You need $5,000 for stock.');cash-=5000;shopStock++;save();ui();toast('Shop stock purchased!')});
 document.querySelectorAll('#garage [data-car]').forEach(btn=>{const v=fleet[btn.dataset.car];btn.textContent=btn.dataset.car.toUpperCase()+' CAR · '+(v.price?'$'+v.price.toLocaleString('en-US'):'OWNED')});
 const steering=document.querySelector('#steering'),wheelRing=steering.querySelector('.wheel-ring'),pedals=document.querySelector('#pedals');
@@ -158,8 +167,16 @@ function ui(){cashEl.textContent='$'+Math.floor(cash).toLocaleString('en-US');ow
 function save(){try{localStorage.setItem('derry_save',JSON.stringify({cash,owned,businessLevel,employees,shopStock,vehicles:Object.fromEntries(Object.entries(fleet).map(([k,v])=>[k,v.owned]))}))}catch{}}
 function toast(msg){const el=document.querySelector('#toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800)}
 buy.addEventListener('click',()=>{if(cash<25000)return toast('Not enough cash yet.');cash-=25000;owned++;save();ui();toast('Kiosk purchased! Your business is open.')});document.querySelector('#upgradeBusiness').addEventListener('click',()=>{if(cash<10000)return toast('You need $10,000 to upgrade.');cash-=10000;businessLevel++;save();ui();toast('Business upgraded!')});document.querySelector('#hireWorker').addEventListener('click',()=>{if(cash<7500)return toast('You need $7,500 to hire an employee.');cash-=7500;employees++;save();ui();toast('Employee hired!')});ui();
+const shopInterior=new THREE.Group();shopInterior.position.set(150,0,150);scene.add(shopInterior);
+const shopFloor=new THREE.Mesh(new THREE.BoxGeometry(18,.25,16),mat(0xb7a58b));shopFloor.position.y=-.12;shopInterior.add(shopFloor);
+const shopWallMat=mat(0xe1d8c7);
+for(const wall of [{x:0,y:2.5,z:-8,w:18,h:5,d:.3},{x:-9,y:2.5,z:0,w:.3,h:5,d:16},{x:9,y:2.5,z:0,w:.3,h:5,d:16}]){const m=new THREE.Mesh(new THREE.BoxGeometry(wall.w,wall.h,wall.d),shopWallMat);m.position.set(wall.x,wall.y,wall.z);shopInterior.add(m)}
+const counter=new THREE.Mesh(new THREE.BoxGeometry(6,1.2,1.2),mat(0x79553a));counter.position.set(0,.6,4);shopInterior.add(counter);
+for(let row=0;row<2;row++){const shelf=new THREE.Mesh(new THREE.BoxGeometry(1,3,8),mat(0x76583d));shelf.position.set(row===0?-6:6,1.5,-1);shopInterior.add(shelf);for(let k=0;k<4;k++){const goods=new THREE.Mesh(new THREE.BoxGeometry(.75,.55,.75),mat([0xc95a46,0x4c9b78,0xd6ad48,0x477fa6][(k+row)%4]));goods.position.set(row===0?-5.4:5.4,.6+k*.65,-4+k*1.8);shopInterior.add(goods)}}
+let shopReturn=null;
 const clock=new THREE.Clock();let elapsed=0;
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);elapsed+=dt;
+ traffic.forEach(t=>{t.z+=t.direction*t.speed*dt;if(t.z>118)t.z=-118;if(t.z< -118)t.z=118;t.v.position.z=t.z;t.v.rotation.y=t.direction>0?0:Math.PI});
  pedestrians.forEach(npc=>{
   npc.z+=npc.direction*npc.speed*dt;
   if(npc.z>108){npc.z=108;npc.direction=-1}
