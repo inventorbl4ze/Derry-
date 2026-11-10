@@ -291,7 +291,8 @@ const houseInterior=new THREE.Group();houseInterior.position.set(180,0,150);scen
 const houseFloor=new THREE.Mesh(new THREE.BoxGeometry(20,.3,18),mat(0x9b8064));houseFloor.position.y=-.14;houseInterior.add(houseFloor);
 const houseWalls=mat(0xe5ddcf);
 for(const wall of [{x:0,y:2.6,z:-9,w:20,h:5.2,d:.3},{x:-10,y:2.6,z:0,w:.3,h:5.2,d:18},{x:10,y:2.6,z:0,w:.3,h:5.2,d:18}]){const m=new THREE.Mesh(new THREE.BoxGeometry(wall.w,wall.h,wall.d),houseWalls);m.position.set(wall.x,wall.y,wall.z);houseInterior.add(m)}
-function furniture(x,y,z,w,h,d,color){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(color));m.position.set(x,y,z);m.castShadow=true;houseInterior.add(m);return m}
+const houseFurnishings=[];
+function furniture(x,y,z,w,h,d,color){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(color));m.position.set(x,y,z);m.castShadow=true;houseInterior.add(m);houseFurnishings.push(m);m.visible=houseFurnished;return m}
 furniture(-5,.65,-5,4,1.3,2,0x416b78);furniture(5,.55,-5,3,1.1,2,0x6d4939);furniture(-5,.35,4,3,.7,2,0x8c7657);furniture(5,.8,4,2.5,1.6,2,0x6b7f91);
 const houseLights=new THREE.PointLight(0xffe0a8,1.2,24);houseLights.position.set(0,4,0);houseInterior.add(houseLights);
 let houseReturn=null;
@@ -332,7 +333,7 @@ document.querySelector('#buyHouse').addEventListener('click',()=>{
 document.querySelector('#furnishHouse').addEventListener('click',()=>{
  if(!ownedHouse||houseFurnished)return;
  if(cash<5000)return toast('You need $5,000 for furnishings.');
- cash-=5000;houseFurnished=true;save();ui();updatePropertyUI();toast('Your home is furnished!');
+ cash-=5000;houseFurnished=true;houseFurnishings.forEach(m=>m.visible=true);save();ui();updatePropertyUI();toast('Your home is furnished!');
 });
 document.querySelector('#moveIntoHouse').addEventListener('click',()=>{
  if(!ownedHouse)return;
