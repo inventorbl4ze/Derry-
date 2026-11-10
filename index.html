@@ -127,7 +127,7 @@ button:disabled{opacity:.45}
  <div class="stat" id="propertyStatus">Buy a property and make it yours.</div>
  <button id="buyShopProperty">Buy a shop · $40,000</button>
  <button id="enterOwnedShop">Enter my shop</button>
- <button id="buyHouse">Buy a home · $60,000</button>
+ <label for="houseType" style="display:block;font-size:11px;margin:8px 0 4px;color:#c3d1df">Choose the type of house</label><select id="houseType" style="width:100%;padding:10px;border-radius:9px;background:#1a3042;color:white;border:1px solid #ffffff55"><option value="apartment">City apartment · $120,000</option><option value="family">Family house · $350,000</option><option value="luxury">Luxury villa · $1,200,000</option><option value="mansion">Grand mansion · $3,000,000</option></select><button id="buyHouse">Buy selected house</button>
  <button id="furnishHouse">Furnish home · $5,000</button>
  <button id="moveIntoHouse">Move into my home</button>
  <button id="leaveHome">Leave home</button>
@@ -173,7 +173,13 @@ function createBuildingInterior(index){
  else if(type===2){for(const x of [-4,0,4]){piece(x,1.4,-2,1,2.8,5,0x76543a);for(const y of [.65,1.45,2.25])for(const z of [-3.5,-2,-.5])piece(x,y,z,.55,.38,.55,0xd36d48)}piece(0,.6,4,5,1.1,1,0x62462f)}
  else if(type===3){piece(0,.65,-4,4,.95,1,0x684a34);for(const x of [-3,3])for(const z of [-1.5,3]){piece(x,.8,z,1.7,.12,1.7,0x9d7148);piece(x-1,.45,z,.35,.9,.35,0x426b70);piece(x+1,.45,z,.35,.9,.35,0x426b70)}}
  else{piece(0,.65,-3,4,.95,1.1,0x78918e);for(const x of [-4,-1.5,1.5,4]){piece(x,.45,1,1.15,.75,.65,0x547d82);piece(x,.95,1,.9,.2,.65,0xd9e4df)}piece(3,.5,-.5,1.6,1,.8,0x8b9b9d)}
- piece(0,1.5,5.82,2.2,3,.08,0x765039);return room;
+ piece(0,1.5,5.82,2.2,3,.08,0x765039);
+ // Extra decor makes every generated building feel occupied and furnished.
+ piece(-5,.16,0,3.5,.08,3,0x8b6250);piece(5,.16,0,3.5,.08,3,0x6d817b);
+ for(const x of [-5.5,5.5]){piece(x,1.05,-5.55,.65,2,.65,0x6b543e);piece(x,2.15,-5.55,.85,.12,.85,0x3d7954)}
+ piece(-5,.9,4,1.1,1.8,.65,0x76513a);piece(5,.55,3.8,1.6,1.1,1.2,0x805b3c);
+ for(const x of [-3.8,3.8]){piece(x,1.25,-1.8,.12,1.4,1.8,0x6d8790);piece(x,2.1,-1.8,1.1,.12,.12,0xc7b28f)}
+ return room;
 }
 function building(x,z,w,d,h,color,i){
  const g=new THREE.Group(),body=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(color));body.position.y=h/2;body.castShadow=true;body.receiveShadow=true;g.add(body);
@@ -211,6 +217,14 @@ const hair=new THREE.Mesh(new THREE.SphereGeometry(.35,14,9,0,Math.PI*2,0,Math.P
 const eyeMat=mat(0x17191b,.3);for(const side of [-1,1]){const eye=new THREE.Mesh(new THREE.SphereGeometry(.035,8,6),eyeMat);eye.position.set(side*.115,2.42,.302);player.add(eye);const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.16,.62,4,8),pants);leg.position.set(side*.2,.55,0);leg.castShadow=true;player.add(leg);const foot=new THREE.Mesh(new THREE.BoxGeometry(.34,.17,.5),shoe);foot.position.set(side*.2,.13,.13);player.add(foot);const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.56,4,8),shirt);arm.position.set(side*.52,1.43,0);arm.rotation.z=side*.12;arm.castShadow=true;player.add(arm);const hand=new THREE.Mesh(new THREE.SphereGeometry(.13,8,7),skin);hand.position.set(side*.55,1.05,.02);player.add(hand)}
 const belt=new THREE.Mesh(new THREE.BoxGeometry(.72,.12,.48),mat(0x282b2e));belt.position.y=.95;player.add(belt);
 player.position.set(-20,0,16);scene.add(player);
+// Small starter mini-market beside the mansion, with a counter, shelves and a clerk.
+const miniShop=new THREE.Group();miniShop.position.set(14,0,4);scene.add(miniShop);
+function shopProp(x,y,z,w,h,d,c){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.position.set(x,y,z);m.castShadow=true;miniShop.add(m)}
+shopProp(0,1.8,0,8,3.6,7,0xe3d8c4);shopProp(0,3.7,0,8.3,.25,7.3,0x4d5b61);shopProp(0,1.05,3.65,2.1,2.1,.18,0x754c30);
+for(const x of [-2.5,0,2.5]){shopProp(x,1.1,-2.2,.8,2.2,.55,0x765039);for(let y=.55;y<2.1;y+=.65)shopProp(x,y,-1.86,.68,.12,.42,0xc08b51)}
+shopProp(-1,.65,1.8,3,.9,.8,0x6c4d33);shopProp(-1,1.15,1.8,3,.12,.8,0xc39a65);
+const clerk=new THREE.Group();const clerkBody=new THREE.Mesh(new THREE.CapsuleGeometry(.22,.58,3,7),mat(0x286c68));clerkBody.position.y=1.05;clerk.add(clerkBody);const clerkHead=new THREE.Mesh(new THREE.SphereGeometry(.19,10,8),mat(0x80583f));clerkHead.position.y=1.78;clerk.add(clerkHead);clerk.position.set(15,0,5);scene.add(clerk);
+solidAreas.push({x:14,z:4,hw:4.8,hd:4.4});cityBuildings.push({x:14,z:4,w:8,d:7,h:4,index:102,doorX:14,doorZ:9.1,interior:null});
 const homeRoom=new THREE.Group();homeRoom.position.set(600,0,600);scene.add(homeRoom);
 function homePiece(g,x,y,z,w,h,d,c){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.position.set(x,y,z);m.castShadow=true;g.add(m);return m}
 const mansion=new THREE.Group();mansion.position.set(-20,0,4);scene.add(mansion);homePiece(mansion,0,2.2,0,19,4.4,15,0xe8dfcf);homePiece(mansion,0,4.55,0,20,.35,16,0x555f68);homePiece(mansion,0,.15,0,21,.3,17,0x9d9b91);homePiece(mansion,-12,.12,0,5,.24,20,0x4c8762);homePiece(mansion,12,.12,0,5,.24,20,0x4c8762);homePiece(mansion,0,.1,-12,28,.2,5,0x4c8762);homePiece(mansion,0,.12,12,25,.24,4,0x4c8762);
@@ -385,8 +399,8 @@ document.querySelector('#enterOwnedShop').addEventListener('click',()=>{
 });
 document.querySelector('#buyHouse').addEventListener('click',()=>{
  if(ownedHouse)return;
- if(cash<60000)return toast('You need $60,000 to buy this home.');
- cash-=60000;ownedHouse=true;save();ui();updatePropertyUI();toast('Home purchased! You can move in now.');
+ const prices={apartment:120000,family:350000,luxury:1200000,mansion:3000000};const kind=document.querySelector('#houseType').value,price=prices[kind];if(cash<price)return toast('You need $'+price.toLocaleString('en-US')+' for this property.');
+ cash-=price;ownedHouse=true;save();ui();updatePropertyUI();toast('Home purchased! You can move in now.');
 });
 document.querySelector('#furnishHouse').addEventListener('click',()=>{
  if(!ownedHouse||houseFurnished)return;
