@@ -1,28 +1,26 @@
-# DERRY 😎
+# DEROX
 
-A phone-first, browser-based 3D business and city-life simulation.
+A phone-first, browser-based 3D city and business life simulation.
 
-## First prototype
-- Original Three.js city scene inspired by Lagos streets.
+## Play
+https://inventorbl4ze.github.io/Derry-/
+
+## Game features
+- Original Three.js 3D city scene inspired by Lagos streets.
 - Third-person player movement with keyboard and touch controls.
-- Responsive HUD and landscape-friendly mobile layout.
-- Starting balance: **$100,000**.
-- First business purchase prototype with simulated income.
-- Local save for cash and owned businesses.
+- Mobile-friendly landscape layout and on-screen controls.
+- Virtual cash and savings, businesses, vehicles, properties and city exploration.
+- Local save for game progress.
 
-## Run
-Open the repository with GitHub Pages enabled, or serve this folder with any static web server. The Three.js module is loaded from jsDelivr, so an internet connection is required for the 3D engine.
+## Run locally
+Open the game through GitHub Pages or serve this folder with a static web server. The Three.js module is loaded from jsDelivr, so an internet connection is required for the 3D engine.
 
 ## Controls
 - Desktop: WASD or arrow keys to move; drag the screen to look around.
-- Mobile: use the on-screen joystick; use the look area to rotate the camera.
-- Tap **Buy kiosk** in the business panel to purchase the first business.
+- Mobile: use the on-screen controls and look area to rotate the camera.
 
 ## Licensing
-DERRY's original code is released under the MIT License. Third-party libraries and assets retain their own licences. This prototype does not copy source code from Allworld or SlimCity.
+DEROX's original code is released under the MIT License. Third-party libraries and assets retain their own licences.
 
-## Roadmap
-1. Playable 3D city prototype.
-2. Business ownership, employees, stock and expenses.
-3. More neighbourhoods, interiors, vehicles and city activities.
-4. Save slots, missions and richer city simulation.
+## Search indexing
+The site includes a descriptive page title, search description, structured game metadata, robots.txt and sitemap.xml to help search engines understand the game. Search indexing is controlled by the search engine and is not guaranteed.
