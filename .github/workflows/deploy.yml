@@ -1,4 +1,4 @@
-name: Deploy DERRY to GitHub Pages
+name: Deploy DEROX to GitHub Pages
 
 on:
   push:
