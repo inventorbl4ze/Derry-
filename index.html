@@ -322,6 +322,16 @@ button:disabled{opacity:.45}
 @media(max-height:620px){#deroxIntro .intro-content{padding:8px;margin-top:-1vh}#deroxIntro .intro-logo{font-size:clamp(44px,11vh,78px);margin:7px 0}#deroxIntro .intro-copy{margin:6px auto 10px;font-size:10px}#deroxIntro .intro-car{height:70px;bottom:8%}#deroxIntro .intro-footer{margin-top:8px}}
 @media(prefers-reduced-motion:reduce){#deroxIntro *,#deroxIntro *:before,#deroxIntro *:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
 
+
+/* DEROX phone app layout correction: keep app content in the main screen area,
+   not in an automatically-created grid row at the bottom. */
+#gamePhone{display:grid;grid-template-rows:32px minmax(0,1fr) 30px!important;grid-auto-rows:0!important}
+#phoneHome{grid-row:2;grid-column:1;min-height:0;height:100%;box-sizing:border-box}
+.phoneAppHeader{position:absolute!important;z-index:3;left:22px;right:22px;top:48px;height:38px;box-sizing:border-box}
+#phoneContent{grid-row:2;grid-column:1;align-self:stretch;min-height:0;height:100%;box-sizing:border-box;padding-top:54px!important;overflow-y:auto!important}
+.phoneBottom{grid-row:3;grid-column:1}
+#phoneContent .phone-app-screen.active{display:block!important;width:100%!important;min-height:100%!important;box-sizing:border-box!important}
+
 </style>
 </head>
 <body>
