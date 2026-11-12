@@ -273,45 +273,83 @@ button:disabled{opacity:.45}
   #rotateNotice{display:none!important}
 }
 
-/* DEROX cinematic opening screen */
-#deroxIntro{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 72%,#183b4b 0%,#091827 48%,#030812 100%);color:#f5f8fc;font-family:Inter,system-ui,Arial,sans-serif}
-#deroxIntro:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,#050b14 100%),repeating-linear-gradient(90deg,transparent 0 48px,#ffffff08 49px 50px);pointer-events:none}
-.intro-skyline{position:absolute;bottom:0;left:0;right:0;height:43%;display:flex;align-items:flex-end;justify-content:center;gap:7px;opacity:.72;filter:drop-shadow(0 -8px 22px #39b9ce22)}
-.intro-skyline i{display:block;width:clamp(18px,5vw,58px);height:var(--h);background:linear-gradient(180deg,#1b3b50,#081421);border:1px solid #6ac7d522;border-bottom:0;position:relative}
-.intro-skyline i:after{content:"";position:absolute;inset:12px 5px;background:repeating-linear-gradient(0deg,transparent 0 13px,#67d7d033 14px 16px),repeating-linear-gradient(90deg,transparent 0 12px,#67d7d022 13px 15px)}
-.intro-content{position:relative;z-index:2;width:min(620px,90vw);text-align:center;padding:28px 22px 38px}
-.intro-kicker{font-size:10px;letter-spacing:5px;color:#83d9cf;font-weight:900;text-transform:uppercase}
-.intro-logo{font-size:clamp(54px,13vw,104px);font-weight:1000;letter-spacing:clamp(5px,2vw,15px);line-height:1;margin:16px 0 10px;text-shadow:0 0 25px #51d9d066,0 8px 35px #000}
-.intro-logo span{color:#70e4c2}
-.intro-line{width:78px;height:3px;margin:22px auto;background:linear-gradient(90deg,#55c9e2,#83f0b9);border-radius:5px}
-.intro-tagline{font-size:clamp(16px,3.7vw,23px);font-weight:800;letter-spacing:.5px}
-.intro-copy{max-width:410px;margin:12px auto 26px;color:#b7c9d8;font-size:13px;line-height:1.65}
-#enterDerox{width:min(260px,80vw);padding:15px 22px;margin:0;border:1px solid #a6ffe0;background:linear-gradient(110deg,#5bd5c5,#9af0b8);color:#06202a;font-size:13px;letter-spacing:1.6px;font-weight:1000;box-shadow:0 0 30px #54d8bd44;touch-action:manipulation}
-#enterDerox:active{transform:scale(.97)}
-.intro-footer{margin-top:20px;color:#8198aa;font-size:9px;letter-spacing:2px}
-.intro-glow{position:absolute;width:min(70vw,520px);height:min(70vw,520px);border:1px solid #6ce5d012;border-radius:50%;box-shadow:0 0 90px #41b7cb12,inset 0 0 80px #41b7cb0c;animation:introPulse 5s ease-in-out infinite}
-@keyframes introPulse{50%{transform:scale(1.08);opacity:.55}}
-@media(max-height:500px){.intro-content{padding:12px}.intro-logo{font-size:clamp(42px,10vh,72px);margin:8px 0}.intro-line{margin:12px auto}.intro-copy{margin:7px auto 14px}.intro-skyline{height:36%}}
+/* DEROX cinematic intro — layered animated city scene */
+#deroxIntro{position:fixed;inset:0;z-index:1000;overflow:hidden;display:grid;place-items:center;background:#07111d;color:#f7f8fb;font-family:Inter,system-ui,Arial,sans-serif;isolation:isolate}
+#deroxIntro *{box-sizing:border-box}
+#deroxIntro .intro-scene{position:absolute;inset:0;overflow:hidden;background:linear-gradient(180deg,#172e55 0%,#a65d62 42%,#f3a65e 62%,#18283a 100%);animation:introSceneIn 1.4s ease both}
+#deroxIntro .intro-sun{position:absolute;width:42vw;height:42vw;max-width:310px;max-height:310px;min-width:145px;min-height:145px;left:50%;top:31%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#ffe9b0 0 35%,#ffbd78 62%,#f18d65 100%);box-shadow:0 0 70px #ffbf7b88;animation:introSunrise 7s ease-in-out infinite alternate}
+#deroxIntro .intro-haze{position:absolute;inset:34% -10% 0;background:linear-gradient(180deg,#f5b47a22,transparent 40%,#07111d 100%);z-index:2}
+#deroxIntro .intro-city{position:absolute;left:-8%;right:-8%;bottom:16%;height:48%;display:flex;align-items:flex-end;justify-content:center;gap:clamp(3px,1vw,12px);transform-origin:50% 100%;animation:introCityMove 18s ease-in-out infinite alternate}
+#deroxIntro .intro-building{position:relative;flex:1;max-width:90px;height:var(--bh);min-width:14px;background:linear-gradient(90deg,#101f35,#203c59 48%,#0c1b2d);border:1px solid #8bd7ee33;box-shadow:inset 0 0 16px #75d6ff12;transform:skewY(-1deg)}
+#deroxIntro .intro-building:before{content:"";position:absolute;inset:9px 5px;background:repeating-linear-gradient(0deg,transparent 0 12px,#ffd98b88 13px 15px),repeating-linear-gradient(90deg,transparent 0 10px,#9fe7ff55 11px 13px);opacity:.62}
+#deroxIntro .intro-building.tall{max-width:66px;background:linear-gradient(90deg,#0b1c31,#28516a 50%,#10243b);border-top:3px solid #68d9f5;box-shadow:0 0 24px #4cc9ef33}
+#deroxIntro .intro-building.tall:after{content:"DEROX";position:absolute;top:20%;left:0;right:0;text-align:center;color:#ffd47a;font-weight:1000;font-size:clamp(7px,1.4vw,12px);letter-spacing:1px;text-shadow:0 0 12px #ffcf6a}
+#deroxIntro .intro-road{position:absolute;left:-15%;right:-15%;bottom:-8%;height:34%;z-index:3;background:linear-gradient(180deg,#27394a,#080f18 70%);transform:perspective(180px) rotateX(9deg);border-top:2px solid #f8c17a66}
+#deroxIntro .intro-road:before{content:"";position:absolute;left:50%;top:0;width:3px;height:100%;background:repeating-linear-gradient(180deg,#f7d28a 0 24px,transparent 24px 48px);opacity:.8;animation:introRoadMove .7s linear infinite}
+#deroxIntro .intro-road:after{content:"";position:absolute;left:0;right:0;top:18%;height:2px;background:#e5f5ff55;box-shadow:0 30px 0 #e5f5ff22,0 60px 0 #e5f5ff22}
+#deroxIntro .intro-heli{position:absolute;z-index:4;top:17%;left:-30%;width:104px;height:34px;animation:introHeliFly 12s linear infinite;filter:drop-shadow(0 7px 9px #06101b88)}
+#deroxIntro .intro-heli-body{position:absolute;left:17px;top:11px;width:68px;height:23px;border-radius:55% 45% 45% 45%;background:linear-gradient(180deg,#dce7e8,#3e647a 50%,#15283a);border:1px solid #d8f5ff}
+#deroxIntro .intro-heli-body:before{content:"";position:absolute;left:16px;top:2px;width:24px;height:12px;border-radius:50% 50% 15% 15%;background:#6cc6df;border:1px solid #d9f8ff}
+#deroxIntro .intro-heli-body:after{content:"";position:absolute;right:-15px;top:8px;width:22px;height:3px;background:#9dbac7;transform:rotate(-8deg)}
+#deroxIntro .intro-heli-tail{position:absolute;left:0;top:15px;width:27px;height:3px;background:#a9c6d4;transform:rotate(-12deg)}
+#deroxIntro .intro-heli-rotor{position:absolute;left:32px;top:3px;width:68px;height:2px;background:#e8f7ff;transform-origin:center;animation:introRotor .12s linear infinite}
+#deroxIntro .intro-heli-rotor:after{content:"";position:absolute;left:32px;top:-8px;width:3px;height:17px;background:#e8f7ff}
+#deroxIntro .intro-car{position:absolute;z-index:5;left:50%;bottom:10%;width:min(62vw,340px);height:100px;transform:translateX(-50%);animation:introCarArrive 2.2s cubic-bezier(.2,.8,.2,1) both;filter:drop-shadow(0 13px 12px #000b)}
+#deroxIntro .intro-car-body{position:absolute;left:2%;right:2%;bottom:13px;height:48px;border-radius:55% 35% 18% 18%;background:linear-gradient(180deg,#ffe18b 0%,#f5a91e 42%,#a85a0b 100%);border:2px solid #ffe7a6;clip-path:polygon(0 42%,12% 28%,28% 20%,39% 0,66% 0,82% 25%,100% 43%,96% 88%,6% 88%)}
+#deroxIntro .intro-car-window{position:absolute;left:32%;top:24px;width:39%;height:30px;background:linear-gradient(135deg,#7fc2d7,#162d46 65%);clip-path:polygon(17% 0,82% 0,100% 100%,0 100%);border:1px solid #d9f2ff}
+#deroxIntro .intro-wheel{position:absolute;bottom:4px;width:42px;height:42px;border:8px solid #101722;border-radius:50%;background:radial-gradient(circle,#b8c5ce 0 20%,#334452 22% 48%,#0b121a 52%);box-shadow:0 0 0 2px #9daab4}
+#deroxIntro .intro-wheel.left{left:17%}.intro-wheel.right{right:17%}
+#deroxIntro .intro-content{position:relative;z-index:8;width:min(650px,92vw);padding:25px 20px;text-align:center;margin-top:-3vh;animation:introTextIn 1.2s .25s both}
+#deroxIntro .intro-kicker{font-size:10px;letter-spacing:5px;color:#b8f2ed;font-weight:900;text-transform:uppercase;text-shadow:0 2px 12px #06101b}
+#deroxIntro .intro-logo{margin:13px 0 6px;font-size:clamp(58px,15vw,112px);font-weight:1000;letter-spacing:clamp(5px,2vw,16px);line-height:1;color:#f4f7fa;-webkit-text-stroke:1px #fff;text-shadow:0 3px 0 #8b9ba9,0 7px 0 #3a5368,0 13px 25px #000c,0 0 35px #79dcff77}
+#deroxIntro .intro-logo span{color:#ffd36f}
+#deroxIntro .intro-tagline{font-size:clamp(15px,4vw,23px);font-weight:900;letter-spacing:.3px;text-shadow:0 2px 10px #000}
+#deroxIntro .intro-copy{max-width:430px;margin:10px auto 19px;color:#e0eaf3;font-size:12px;line-height:1.55;text-shadow:0 2px 8px #000}
+#deroxIntro #enterDerox{width:min(260px,80vw);padding:15px 22px;margin:0;border:1px solid #ffe4a0;border-radius:12px;background:linear-gradient(110deg,#e99b25,#ffdc78 55%,#c77b17);color:#211506;font-size:13px;letter-spacing:1.5px;font-weight:1000;box-shadow:0 0 26px #ffbd4c77,0 6px 18px #0008;touch-action:manipulation}
+#deroxIntro #enterDerox:active{transform:scale(.97)}
+#deroxIntro .intro-footer{margin-top:15px;color:#f3dcae;font-size:9px;letter-spacing:2px;text-shadow:0 2px 7px #000}
+#deroxIntro .intro-credit{margin-top:7px;color:#79e6ed;font-size:11px;font-weight:900;letter-spacing:1.4px;text-shadow:0 2px 8px #000}
+#deroxIntro .intro-skip{position:absolute;z-index:9;top:calc(env(safe-area-inset-top,8px) + 12px);right:14px;width:auto;margin:0;padding:8px 13px;border:1px solid #ffffff66;background:#07152299;color:#fff;font-size:10px;letter-spacing:1px}
+@keyframes introSceneIn{from{transform:scale(1.12);filter:brightness(.65)}to{transform:scale(1);filter:brightness(1)}}
+@keyframes introSunrise{to{transform:translate(-50%,-47%) scale(1.08);filter:brightness(1.12)}}
+@keyframes introCityMove{to{transform:scale(1.08) translateX(-2%)}}
+@keyframes introRoadMove{to{background-position:0 48px}}
+@keyframes introHeliFly{0%{left:-30%;transform:translateY(0)}45%{transform:translateY(-13px)}100%{left:115%;transform:translateY(3px)}}
+@keyframes introRotor{to{transform:rotate(360deg)}}
+@keyframes introCarArrive{from{transform:translate(-50%,45px) scale(.72);opacity:0}to{transform:translate(-50%,0) scale(1);opacity:1}}
+@keyframes introTextIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:700px){#deroxIntro .intro-content{padding:16px 14px;margin-top:-2vh}#deroxIntro .intro-copy{max-width:340px;margin:8px auto 13px;font-size:11px}#deroxIntro .intro-city{height:43%;bottom:18%}#deroxIntro .intro-car{width:min(72vw,310px);height:82px;bottom:10%}#deroxIntro .intro-car-body{height:39px}#deroxIntro .intro-wheel{width:34px;height:34px;border-width:7px}#deroxIntro .intro-logo{font-size:clamp(54px,16vw,86px)}}
+@media(max-height:620px){#deroxIntro .intro-content{padding:8px;margin-top:-1vh}#deroxIntro .intro-logo{font-size:clamp(44px,11vh,78px);margin:7px 0}#deroxIntro .intro-copy{margin:6px auto 10px;font-size:10px}#deroxIntro .intro-car{height:70px;bottom:8%}#deroxIntro .intro-footer{margin-top:8px}}
+@media(prefers-reduced-motion:reduce){#deroxIntro *,#deroxIntro *:before,#deroxIntro *:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
 
 </style>
 </head>
 <body>
 
-<div id="deroxIntro" role="dialog" aria-label="Welcome to DEROX">
- <div class="intro-glow" aria-hidden="true"></div>
- <div class="intro-skyline" aria-hidden="true">
-  <i style="--h:42%"></i><i style="--h:64%"></i><i style="--h:50%"></i><i style="--h:82%"></i><i style="--h:57%"></i><i style="--h:72%"></i><i style="--h:46%"></i><i style="--h:66%"></i><i style="--h:39%"></i><i style="--h:58%"></i><i style="--h:77%"></i><i style="--h:48%"></i>
+<div id="deroxIntro" role="dialog" aria-label="DEROX cinematic game introduction" aria-modal="true">
+ <div class="intro-scene" aria-hidden="true">
+  <div class="intro-sun"></div><div class="intro-haze"></div>
+  <div class="intro-city">
+   <i class="intro-building" style="--bh:42%"></i><i class="intro-building" style="--bh:58%"></i><i class="intro-building" style="--bh:46%"></i><i class="intro-building tall" style="--bh:92%"></i><i class="intro-building" style="--bh:65%"></i><i class="intro-building" style="--bh:51%"></i><i class="intro-building tall" style="--bh:78%"></i><i class="intro-building" style="--bh:60%"></i><i class="intro-building" style="--bh:43%"></i><i class="intro-building" style="--bh:70%"></i>
+  </div>
+  <div class="intro-heli"><div class="intro-heli-tail"></div><div class="intro-heli-body"></div><div class="intro-heli-rotor"></div></div>
+  <div class="intro-road"></div>
+  <div class="intro-car"><div class="intro-car-body"></div><div class="intro-car-window"></div><div class="intro-wheel left"></div><div class="intro-wheel right"></div></div>
  </div>
+ <button class="intro-skip" id="skipDeroxIntro" type="button">SKIP INTRO</button>
  <div class="intro-content">
   <div class="intro-kicker">A new world is waiting</div>
   <div class="intro-logo">DER<span>O</span>X</div>
-  <div class="intro-line"></div>
-  <div class="intro-tagline">Your city. Your choices. Your empire.</div>
-  <p class="intro-copy">Step into a living city. Explore, drive, build businesses, own properties and create your own story. The future of your empire starts now.</p>
-  <button id="enterDerox">ENTER THE CITY&nbsp; →</button>
-  <div class="intro-footer">CITY &amp; BUSINESS LIFE SIMULATION</div>
+  <div class="intro-tagline">Build. Trade. Expand. Rule Your Empire.</div>
+  <p class="intro-copy">Explore a living 3D city, drive luxury vehicles, build businesses, own properties and grow your empire. Your story starts here.</p>
+  <button id="enterDerox" type="button">ENTER THE CITY&nbsp; →</button>
+  <div class="intro-footer">A REALISTIC 3D BUSINESS &amp; EMPIRE SIMULATION</div>
+  <div class="intro-credit">A product of inventorbl4ze</div>
  </div>
 </div>
+<script>
+(()=>{const screen=document.getElementById('deroxIntro');const dismiss=()=>{if(!screen)return;screen.style.transition='opacity .7s ease, transform .7s ease';screen.style.opacity='0';screen.style.transform='scale(1.035)';screen.style.pointerEvents='none';window.setTimeout(()=>screen.remove(),720)};document.getElementById('enterDerox')?.addEventListener('click',dismiss);document.getElementById('skipDeroxIntro')?.addEventListener('click',dismiss)})();
+</script>
 <div id="rotateNotice" aria-hidden="true"></div>
 <div id="game"></div>
 <div class="hud">
@@ -346,19 +384,6 @@ button:disabled{opacity:.45}
 <div id="toast"></div>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-
-const introScreen=document.querySelector('#deroxIntro');
-const enterDerox=document.querySelector('#enterDerox');
-if(enterDerox&&introScreen){
- enterDerox.addEventListener('click',()=>{
-  introScreen.style.transition='opacity .65s ease, transform .65s ease';
-  introScreen.style.opacity='0';
-  introScreen.style.transform='scale(1.025)';
-  introScreen.style.pointerEvents='none';
-  setTimeout(()=>introScreen.remove(),700);
- });
-}
-
 
 const fullButton=document.querySelector('#fullscreenToggle');
 fullButton.addEventListener('click',async()=>{try{if(!document.fullscreenElement){await document.documentElement.requestFullscreen();fullButton.textContent='⛶ Exit full screen';}else{await document.exitFullscreen();fullButton.textContent='⛶ Full screen';}}catch(e){toast('Full screen is not available in this browser. Try Chrome menu → Add to Home screen.')}});
