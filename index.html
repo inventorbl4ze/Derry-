@@ -383,7 +383,30 @@ button:disabled{opacity:.45}
 <div id="npcPanel" class="panel" style="position:fixed;z-index:16;left:50%;top:50%;transform:translate(-50%,-50%);width:min(320px,82vw);display:none"><h3 id="npcTitle">Neighbour</h3><div class="stat" id="npcDialogue">Hello!</div><button id="npcTalk">Talk</button><button id="npcFollow">Follow me</button><button id="npcTask">Ask for help</button><button id="npcStop">Stop following</button><button id="npcClose">Close</button></div><button id="furnitureAction" style="position:fixed;z-index:15;left:50%;bottom:190px;transform:translateX(-50%);width:auto;display:none;background:#d99a45;color:#211708">Use furniture</button><button id="homeAction" style="position:fixed;z-index:14;left:50%;bottom:140px;transform:translateX(-50%);width:auto;display:none;background:#d99a45;color:#211708">Enter mansion</button><div id="miniMapWrap" style="position:fixed;z-index:8;left:12px;top:116px;width:156px;padding:6px;border-radius:13px;background:#071522e8;border:1px solid #ffffff55"><div id="mapHeading" style="font-size:9px;font-weight:800;margin-bottom:4px;color:#bcd2e4">CITY MAP · TAP TO EXPAND</div><canvas id="miniMap" width="144" height="112" style="display:block;width:144px;height:112px;border-radius:7px;touch-action:manipulation"></canvas><div style="display:flex;align-items:center;gap:8px;justify-content:space-between"><div id="mapTarget" style="font-size:9px;color:#72f0b2;margin-top:4px">Explore DEROX</div><button id="mapClose" style="padding:7px 12px;background:#b65a48;color:white;border:0;border-radius:8px;font-weight:800">CLOSE MAP</button></div></div><div id="mapArrow"><span id="mapArrowIcon">▲</span><span id="mapArrowText">DESTINATION</span></div><div id="hint">Explore the city · WASD / arrows or touch joystick</div>
 <div id="toast"></div>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+let THREE;
+try {
+  THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js');
+} catch (firstError) {
+  try {
+    THREE = await import('https://unpkg.com/three@0.160.0/build/three.module.js');
+  } catch (secondError) {
+    const notice = document.createElement('div');
+    notice.style.cssText = 'position:fixed;inset:20% 6% auto;z-index:99999;padding:18px;border:1px solid #ffb86b;border-radius:16px;background:#172536;color:white;font:16px/1.5 Arial;text-align:center';
+    notice.textContent = 'DEROX could not load its 3D engine. Check your internet connection, then reload this page. If the problem continues, the game engine download is being blocked.';
+    document.body.appendChild(notice);
+    throw secondError;
+  }
+}
+window.addEventListener('error', event => {
+  if (!document.querySelector('#deroxRuntimeNotice')) {
+    const notice = document.createElement('div');
+    notice.id = 'deroxRuntimeNotice';
+    notice.style.cssText = 'position:fixed;left:5%;right:5%;bottom:90px;z-index:99999;padding:12px;border:1px solid #ffb86b;border-radius:14px;background:#172536;color:white;font:14px/1.45 Arial';
+    notice.textContent = 'DEROX 3D encountered a startup error. Please reload the game. Details: ' + (event.message || 'graphics startup error');
+    document.body.appendChild(notice);
+  }
+});
+
 
 const fullButton=document.querySelector('#fullscreenToggle');
 fullButton.addEventListener('click',async()=>{try{if(!document.fullscreenElement){await document.documentElement.requestFullscreen();fullButton.textContent='⛶ Exit full screen';}else{await document.exitFullscreen();fullButton.textContent='⛶ Full screen';}}catch(e){toast('Full screen is not available in this browser. Try Chrome menu → Add to Home screen.')}});
@@ -391,7 +414,16 @@ document.addEventListener('fullscreenchange',()=>{fullButton.textContent=documen
 const mount=document.querySelector('#game');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x91b9cf);scene.fog=new THREE.Fog(0x91b9cf,120,620);
 const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,1800);
-const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+let renderer;
+try {
+ renderer=new THREE.WebGLRenderer({antialias:false,powerPreference:'default',failIfMajorPerformanceCaveat:false});
+} catch (graphicsError) {
+ const notice=document.createElement('div');
+ notice.style.cssText='position:fixed;inset:20% 6% auto;z-index:99999;padding:18px;border:1px solid #ffb86b;border-radius:16px;background:#172536;color:white;font:16px/1.5 Arial;text-align:center';
+ notice.textContent='DEROX could not start 3D graphics in this browser. Please make sure Chrome is updated and hardware acceleration/WebGL is available, then reload.';
+ document.body.appendChild(notice);
+ throw graphicsError;
+}
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;mount.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xd9efff,0x52604e,2.1));
 const sun=new THREE.DirectionalLight(0xffedcf,2.5);sun.position.set(-35,65,25);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-75;sun.shadow.camera.right=75;sun.shadow.camera.top=75;sun.shadow.camera.bottom=-75;scene.add(sun);
